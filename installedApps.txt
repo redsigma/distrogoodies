@@ -1,0 +1,4 @@
+#Main apps
+##########
+i3
+rofi
