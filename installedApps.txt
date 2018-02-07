@@ -1,4 +1,4 @@
 #Main apps
 ##########
-i3
+i3 (i3wm, i3status, i3lock)
 rofi
