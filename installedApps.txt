@@ -2,3 +2,5 @@
 ##########
 i3 (i3wm, i3status, i3lock)
 rofi
+gnome-alsamixer
+pulseaudio
