@@ -1,0 +1,20 @@
+Overwrite those files in the below path:
+
+/usr/share/pulseaudio/alsa-mixer/paths
+
+Will set alsamixer values to:
+Capture:40
+Mic boost:20
+Mic internal:0
+
+Other values should be set to 0 from sudo alsamixer:
+Digital
+Also I set PCM to 100
+
+Do an sudo alsactl store to be sure it stores the info
+
+###########################################################
+This should prevent the input mic volume from changing.
+# You need to manually select the echo cancel input in case it doesn't autoselect. It won't break anything
+
+# Don't change the input volume even though it shows 100 or something else, that's not the real one.It respects the alsa settings
