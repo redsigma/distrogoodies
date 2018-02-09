@@ -2,5 +2,8 @@
 ##########
 i3 (i3wm, i3status, i3lock)
 rofi
+dconf-editor
 gnome-alsamixer
 pulseaudio
+pcmanfm
+lxappearance
