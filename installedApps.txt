@@ -7,3 +7,6 @@ gnome-alsamixer
 pulseaudio
 pcmanfm
 lxappearance
+xarchiver
+lightdm
+lightdm-gtk-greeter
