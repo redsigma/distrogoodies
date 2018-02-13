@@ -214,5 +214,8 @@ for_window [title="^Steam Keyboard$"] floating enable
 client.urgent           #ff0000 #ff0000 #ffffff #000000   #0000ff
 
 bindsym Print exec mate-screenshot
+bindsym mod4+Print exec mate-screenshot -w
 bindsym mod4+l exec i3lock -c "$bg-color" -f
+
+exec dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY 
 
