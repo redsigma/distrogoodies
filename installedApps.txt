@@ -2,6 +2,7 @@
 ##########
 i3 (i3wm, i3status, i3lock)
 rofi
+htop
 dconf-editor
 gnome-alsamixer
 pulseaudio
@@ -10,3 +11,7 @@ lxappearance
 xarchiver
 lightdm
 lightdm-gtk-greeter
+
+#Other
+######
+PeaZip (archive manager)
