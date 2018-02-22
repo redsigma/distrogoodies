@@ -180,9 +180,10 @@ bindsym $mod+r mode "resize"
 bar {
 
 
-        status_command i3status
+        status_command i3blocks
 		workspace_buttons yes
         tray_output primary
+
 
     colors {
         background #000000
@@ -196,13 +197,23 @@ bar {
         binding_mode       #2f343a #900000 #ffffff
     }
 }
+
+
+workspace_auto_back_and_forth no
+
+exec gnome-settings-daemon
 exec nm-applet
 exec mate-volume-control-applet
 
+for_window [class="^.*"] border pixel 0
 
-for_window [class="^Steam$" title="^Friends$"] floating enable
-for_window [class="^Steam$" title="Steam - News"] floating enable
+for_window [title="^tilda$"] floating enable, sticky enable
+
+for_window [class="^Steam$"] move workspace 3
 for_window [class="^Steam$" title=".* - Chat"] floating enable
+
+for_window [class="^Steam$" title="^Friends$"] floating enable, move workspace 3
+for_window [class="^Steam$" title="Steam - News"] floating enable
 for_window [class="^Steam$" title="^Settings$"] floating enable
 for_window [class="^Steam$" title=".* - event started"] floating enable
 for_window [class="^Steam$" title=".* CD key"] floating enable
@@ -216,6 +227,8 @@ client.urgent           #ff0000 #ff0000 #ffffff #000000   #0000ff
 bindsym Print exec mate-screenshot
 bindsym mod4+Print exec mate-screenshot -w
 bindsym mod4+l exec i3lock -c "$bg-color" -f
+bindsym mod4+e exec pcmanfm
+bindsym mod4+Shift+e exec "gksudo pcmanfm"
 
 exec dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY 
 
