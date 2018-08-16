@@ -1,0 +1,92 @@
+atool - required for ranger archive extract 
+unzip - required by atool to unzip archives 
+flake8 - linter for vim-syntacticts , also support plugins 
+pkgconf - required by autoreconf 
+#installing deoplete(autocompletion) for vim8(needs neovim stuff) 
+1.You need neovim or vim8 + python3 
+2.if :echo has("python3") returns 1 means you have python3 
+3.Install pip3 for python3. If you have it skip this 
+python-pip - required to get python3 modules with pip3 for the auto complete tool in vim8 
+
+4.Install neovim plugin for python3: 
+pip3 install neovim 
+
+5.Install nvim-yarp and make sure echo exepath('python3') points to python3 execut, if not then set it up with g:python3_host_prog 
+6.Install vim-hug-neovim-rpc 
+7.Test if importing neovim doesn't have error: 
+python3 import neovim 
+7.1 If you get PyExec error from greenlet reinstall it with: 
+sudo pip3 install -U --force-reinstall --no-binary :all: greenlet 
+8.Test if :echo neovim_rpc#serveraddr() prints 127.0.0.1:number 
+9.Vim needs to have utf8 enabled 
+10.Add following to vimrc and autocomplete should appear as you type
+let g:deoplete#enable_at_startup = 1 
+
+#Install universal ctags - that's what flake8 is required for 
+You gotta built it with following commands: 
+./autogen.sh 
+./configure --prefix=/where/you/want # defaults to /usr/local 
+make 
+make install # may require extra privileges depending on where to install 
+After build you can install Tagbar like a normal vim plugin 
+There is also pylint besides flake8. Running both is nice but pylint has some redundant stuff and some better stuff than flake8. 
+Both have pros and cons but flake8 is more solid 
+
+#Changing system locale to utf8: Uncomment the language you want to add in. For english is en_US.UTF-8 UTF-8 
+/etc/locale.gen 
+Run locale-gen so it generates the new locale 
+Now it should appear in locale -a 
+Now edit the LANG env to LANG=en_US.UTF-8. 
+You can do this by creating a ~/.config/locale.conf file with the LANG=en_US.UTF-8 in it. This way it will persist across logins 
+
+ MAKE sure wpa_supplicant always current version(recommended if all the wpa configs are missing) 
+ ----------------------------------------------- 
+ ln -s /usr/share/dhcpcd/hooks/10-wpa_supplicant /usr/lib/dhcpcd/dhcpcd-hooks 
+ Install wget and fping | required for openvpn ui  | DONT THINK YOU NEEDTHIS
+ 
+ #firewall 
+ Install ufw 
+ ufw allow ssh | (a port will appear with ufw status verbose) 
+ ufw allow from 192.168.0.0/24 
+ ufw allow from 192.168.1.0/24 
+ sudo ufw enable | to enable it | it uses iptables and ip6tables(disable their serivce if you have on cuz ufw will take care of it) 
+ Install pptpclient | it said it worked not sure | DONT NEED THIS
+ 
+ # OTHER 
+ pacman.conf = uncomment [multilib] and below so you can install steam 
+ 
+ ## Better wifi using wpa_supplicant manual way 
+ 1. Check if wpa_supplicant is running pgrep wpa_supplicant 
+ 2. If it is kill it with kill ID , where id are ones from pgrep
+ 3. Remove /var/lib/dhcpcd/*,lease to ensure you request a fresh ip
+ 4. Stop dhcpcd dhcdp -k systemctl stop dhcpcd killall dhcdpcd 
+ 5.Start connection with the below command
+ sudo wpa_supplicant -dd -i wlp2s0 -c /etc/wpa_supplicant.conf 
+ /where: -dd = debug 
+              -i wlp2s0 = your interface 
+               -c configpath 
+               -D nl80211 = this is used by default 
+               -B = fork to background. Daemonizing 
+6.Request ip dhcpcd -d If doesn't work kill any running dhcpcd 
+pgrep dhcpcd | killall dhcpcd doesn't always work 
+7. To stop turn off dhcpcd 
+dhcdp -k 
+
+wpa_supplicant.conf example | quotes required: 
+ctrl_interface=/var/run/wpa_supplicant/ 
+network={ 
+  ssid="NAME" 
+  scan_ssid=1 
+  psk="PASSWORD" 
+} 
+use wpa_passphrase "NAME" "PASSWORD" for encrypted output of psk. Copy that in the file 
+
+### RECIPES 
+""Service obliteration 
+systemctl stop serviceName 
+systemctl disable serviceName 
+rm /etc/systemd/system/serviceName | symlinks 
+systemctl daemon-reload 
+systemctl reset-failed | gets rid of failed units 
+Other directories:  /usr/lib/systemd/system/ 
+                            /etc/init.d/serviceName | old style configuration 
