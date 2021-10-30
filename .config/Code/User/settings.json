@@ -1,0 +1,15 @@
+{
+    "workbench.iconTheme": "vscode-great-icons",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.semanticHighlighting.enabled": true,
+    "editor.rulers": [
+        {
+            "column": 80,
+            "color": "#FF00FF"
+        }
+    ],
+    "window.zoomLevel": 0,
+    "files.trimTrailingWhitespace": true
+}
