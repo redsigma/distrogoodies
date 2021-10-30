@@ -1,0 +1,1 @@
+/home/red/.config/vim/.vimrc
