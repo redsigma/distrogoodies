@@ -1,8 +1,0 @@
-Copy that file in:
-/etc/pulse
-
-Make the folder if not exists also delete anything in /home/redsigma/.config/pulse if any exists
-
-After i installed pulseaudio i got an error and adding the defaults file there fixed the problem.
-If the echoInput doesn't get autoselected you can still select it manually as it won't break.
-

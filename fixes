@@ -1,4 +1,0 @@
-sudo apt-get install --reinstall gtk2-engines-murrine:i386
-sudo apt-get install gtk2-engines-murrine
-
-
