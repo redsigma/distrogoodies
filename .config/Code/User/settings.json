@@ -11,5 +11,11 @@
         }
     ],
     "window.zoomLevel": 0,
-    "files.trimTrailingWhitespace": true
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/._**": true
+    },
+    "search.exclude": {
+        "**/._**": true
+    }
 }
