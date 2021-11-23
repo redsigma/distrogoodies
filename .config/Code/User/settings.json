@@ -1,5 +1,6 @@
 {
     "workbench.iconTheme": "vscode-great-icons",
+    "workbench.editor.languageDetection": false,
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
     "editor.wordWrap": "wordWrapColumn",
@@ -17,5 +18,9 @@
     },
     "search.exclude": {
         "**/._**": true
+    },
+    "redhat.telemetry.enabled": false,
+    "yaml.schemas": {
+        "kubernetes": "/*.yaml"
     }
 }
