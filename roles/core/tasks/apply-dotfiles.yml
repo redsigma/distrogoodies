@@ -1,0 +1,22 @@
+---
+- name: Install packages
+  become: true
+  apt:
+    pkg:
+      - stow
+    state: present
+
+
+- name: "[TRANSIENT] Remove files that conflict with Stow"
+  loop:
+    - .bashrc
+    - .profile
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/{{ item }}"
+    state: absent
+
+
+- name: Update dotfiles via stow
+  shell: "stow --dir {{ ansible_env.HOME }}/.dotfiles . --target {{ ansible_env.HOME }} --verbose=2"
+  register: result
+  changed_when: 'result.stderr is search("LINK: ")'

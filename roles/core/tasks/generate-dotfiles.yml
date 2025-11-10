@@ -1,0 +1,116 @@
+---
+- name: Gathering user
+  set_fact:
+    user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.env.USER) }}"
+
+
+- name: Gather templated dotfiles
+  find:
+    paths: "templates"
+    file_type: file
+    hidden: yes
+  register: found_files
+
+#
+# @note: make sure our cloned files are in LF endings
+#
+- name: "[TRANSIENT] Apply LF endings"
+  replace:
+    path: "{{ item.path }}"
+    regexp: '\r$'
+    replace: ''
+  loop: "{{ found_files.files | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+
+- name: Ensure directory exists
+  file:
+    path: "/home/{{ user }}/.dotfiles/"
+    state: directory
+
+
+- name: Generate .stow-local-ignore
+  become_user: "{{ user }}"
+  template:
+    src: .stow-local-ignore
+    dest: "/home/{{ user }}/.dotfiles/.stow-local-ignore"
+
+
+#
+#  Core configs
+#
+
+- name: Generate .bashrc
+  become_user: "{{ user }}"
+  template:
+    src: .bashrc
+    dest: "/home/{{ user }}/.dotfiles/.bashrc"
+
+
+- name: Generate .profile
+  become_user: "{{ user }}"
+  template:
+    src: .profile
+    dest: "/home/{{ user }}/.dotfiles/.profile"
+
+
+- name: Generate .inputrc
+  become_user: "{{ user }}"
+  template:
+    src: .inputrc
+    dest: "/home/{{ user }}/.dotfiles/.inputrc"
+
+
+#
+#  Git configs
+#
+- name: Generate .gitconfig
+  become_user: "{{ user }}"
+  template:
+    src: .gitconfig
+    dest: "/home/{{ user }}/.dotfiles/.gitconfig"
+
+
+#
+#  Tmux configs
+#
+- name: Generate .tmux.conf
+  become_user: "{{ user }}"
+  template:
+    src: .tmux.conf
+    dest: "/home/{{ user }}/.dotfiles/.tmux.conf"
+
+
+#
+#  Login configs
+#
+- name: Generate .hushlogin
+  become_user: "{{ user }}"
+  template:
+    src: .hushlogin
+    dest: "/home/{{ user }}/.dotfiles/.hushlogin"
+
+#
+#  Neovim configs
+#
+- name: Generate Neovim configs (directory)
+  become_user: "{{ user }}"
+  file:
+    path: "/home/{{ user }}/.dotfiles/{{ folder_name }}/{{ item.path }}"
+    state: directory
+  with_filetree: "templates/{{ folder_name }}"
+  vars:
+    folder_name: "nvim"
+  when: item.state == 'directory'
+
+
+- name: Generate Neovim configs (files)
+  become_user: "{{ user }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "/home/{{ user }}/.dotfiles/{{ folder_name }}/{{ item.path }}"
+  with_filetree: "templates/{{ folder_name }}"
+  vars:
+    folder_name: "nvim"
+  when: item.state == 'file'

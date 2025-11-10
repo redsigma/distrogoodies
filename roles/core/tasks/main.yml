@@ -1,0 +1,19 @@
+---
+- name: Install core apps
+  import_tasks: base-apps.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Install other apps
+  import_tasks: base-qol.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Generating dotfiles
+  import_tasks: generate-dotfiles.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Configure dotfiles via stow
+  import_tasks: apply-dotfiles.yml
+  when: ansible_distribution == "Debian"

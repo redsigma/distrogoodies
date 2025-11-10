@@ -1,0 +1,15 @@
+---
+- name: Install packages
+  become: true
+  apt:
+    pkg:
+      - libfuse2  # for running AppImage
+      - tmux
+      - vim
+      - git
+      - gitk
+      - btop
+      - brightnessctl
+    state: present
+    update_cache: true
+

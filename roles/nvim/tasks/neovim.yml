@@ -1,0 +1,140 @@
+- name: Create directory for building neovim
+  block:
+    - name: Remove existing Neovim cloned repository
+      file:
+        path: deps
+        state: absent
+
+    - name: Create fresh deps directory
+      file:
+        path: deps
+        state: directory
+        mode: '0755'
+
+
+- name: Check if Neovim is installed
+  stat:
+    path: /usr/local/bin/nvim
+  register: nvim_path
+  changed_when: false
+
+
+- name: Build neovim
+  block:
+    - name: Clone Neovim repository
+      git:
+        repo: https://github.com/neovim/neovim.git
+        dest: deps/nvim
+        # version: 8b98642002d0506d20628683958cb5c97a0dad80
+        version: v0.11.5
+        update: yes
+
+    #
+    # @note: make sure it's in a fresh new state
+    #
+    - name: Clean repository
+      become: true
+      command:
+        chdir: deps/nvim
+        cmd: git clean -fdx
+      changed_when: false
+
+
+    - name: Install dependencies
+      become: true
+      apt:
+        pkg:
+          - luajit
+        state: present
+
+    - name: Configure Neovim third-party dependencies (CMake)
+      args:
+        chdir: "deps/nvim"
+        creates: ".deps/CMakeCache.txt"
+      command: >
+        cmake -S cmake.deps -B .deps
+        -G Ninja
+        -DCMAKE_BUILD_TYPE=Release
+
+
+    - name: Build Neovim third-party dependencies (CMake)
+      args:
+        chdir: "deps/nvim"
+      command: cmake --build .deps --parallel
+
+
+    - name: Configure Neovim (CMake)
+      args:
+        chdir: "deps/nvim"
+        creates: "./build/CMakeCache.txt"
+      command: >
+        cmake -S . -B ./build
+        -G Ninja
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_INSTALL_PREFIX=/usr/local
+        -DLUA_PRG=/usr/bin/luajit
+
+
+    - name: Build Neovim (CMake)
+      args:
+        chdir: "deps/nvim"
+      command: cmake --build ./build --config Release --parallel
+
+
+    - name: Install Neovim (CMake)
+      become: true
+      args:
+        chdir: "deps/nvim"
+      command: cmake --install ./build --prefix /usr/local
+
+
+    - name: Verify Neovim core runtime
+      stat:
+        path: "/usr/local/share/nvim/runtime/syntax/syntax.vim"
+      register: nvim_syntax
+
+
+    - name: Fail if Neovim runtime missing
+      fail:
+        msg: "Neovim runtime missing at /usr/local/share/nvim/runtime"
+      when: not nvim_syntax.stat.exists
+
+  when: not nvim_path.stat.exists
+
+
+#
+# Post install
+#
+- name: Install python support for neovim
+  block:
+    - name: Install python packages
+      become: true
+      apt:
+        pkg:
+          - pipx
+        state: present
+
+    - name: Ensure pipx path exist
+      become: false
+      command: pipx ensurepath
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/bin/pipx"
+      changed_when: false
+
+    - name: Install pynvim
+      become: false
+      command: pipx install pynvim
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/pipx/venvs/pynvim"
+      changed_when: false
+  when: not nvim_path.stat.exists
+
+
+- name: Post configuration for neovim
+  block:
+  - name: Generate :help pages
+    shell: nvim --headless -c 'helptags ALL' -c quit
+
+  - name: Install Treesitter parsers
+    shell: nvim --headless -c 'TSUpdateSync' -c quit
+  when: not nvim_path.stat.exists

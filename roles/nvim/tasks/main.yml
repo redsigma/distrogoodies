@@ -1,0 +1,4 @@
+---
+- name: Install neovim
+  import_tasks: neovim.yml
+  when: ansible_distribution == "Debian"

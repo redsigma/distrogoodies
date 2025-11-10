@@ -1,0 +1,12 @@
+---
+diffstatic_version: 0.53.0
+git_delta_version: 0.14.0
+bat_version: 0.23.0
+editorconfig_checker_version: 3.2.0
+
+
+#
+# gitconfig stuff
+#
+email: "me@example.com"
+full_name: "myself"

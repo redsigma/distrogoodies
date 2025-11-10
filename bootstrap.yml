@@ -1,0 +1,43 @@
+---
+
+#
+# NOTES:
+#
+#  Some tasks have a [PREFIX] before the name. Below they are explained:
+#
+#  - [TRANSIENT] -> this is an intermediate temporary task. It shouldn't be destructive because a future task will overwrite its changes. It is normal if this step always changes in the playbook
+#
+#
+
+- name: Bootstrap local machine environment
+  hosts: localhost
+  tasks:
+
+    - name: Install core apps
+      tags: core
+      import_role:
+        name: core
+
+
+    - name: Install toolchains
+      tags: toolchain
+      import_role:
+        name: toolchain
+
+
+    - name: Install web browsers
+      tags: browser
+      import_role:
+        name: browser
+
+
+    - name: Install text editors
+      tags: editor
+      import_role:
+        name: editor
+
+
+    - name: Install Neovim
+      tags: nvim
+      import_role:
+        name: nvim

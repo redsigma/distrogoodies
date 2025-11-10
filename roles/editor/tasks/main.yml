@@ -1,0 +1,4 @@
+---
+- name: Install text editors
+  import_tasks: editors.yml
+  when: ansible_distribution == "Debian"

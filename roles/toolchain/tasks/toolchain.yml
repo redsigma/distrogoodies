@@ -1,0 +1,17 @@
+---
+- name: Install dependencies
+  become: true
+  apt:
+    pkg:
+      - ninja-build
+      - gettext
+      - autoconf
+      - automake
+      - cmake
+      - g++
+      - pkg-config
+      - unzip
+      - curl
+      - doxygen
+    state: present
+    update_cache: true
