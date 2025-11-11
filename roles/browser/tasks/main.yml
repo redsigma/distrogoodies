@@ -1,4 +1,8 @@
 ---
+- name: Install Google keys
+  import_tasks: ../keys/google_keys.yml
+  when: ansible_distribution == "Debian"
+
 - name: Install chrome browser
   import_tasks: chrome.yml
   when: ansible_distribution == "Debian"

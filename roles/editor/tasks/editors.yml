@@ -1,89 +1,23 @@
 ---
-# - name: Add keys to package manager
-#   apt_key:
-#     url: "{{ item }}"
-#     state: present
-#   loop:
-#     - https://packages.microsoft.com/keys/microsoft.asc
-
-
-# - name: Add repos to package manager
-#   apt_repository:
-#     repo: "{{ item.repo }}"
-#     filename: "{{ item.filename }}"
-#     state: present
-#     update_cache: false
-#   with_items:
-#     - {
-#         repo: "deb [arch=amd64 trusted=yes] https://packages.microsoft.com/repos/vscode stable main",
-#         filename: "vscode",
-#       }
-
-
-# - name: Install packages
-#   become: true
-#   apt:
-#     pkg:
-#       - code
-#     update_cache: yes
-#     state: present
-
-- name: Add VSCode repo
+- name: Adding VisualStudio Code repo
   become: true
-  block:
-    - name: Ensure keyring folder exist
-      file:
-        path: /etc/apt/keyrings
-        state: directory
-        mode: 0755
-
-    # deps for deb822_repository module
-    - name: Installing dependencies
-      apt:
-        pkg:
-          - python3-debian
-          - python3-apt
-        state: present
-        update_cache: yes
-
-    - name: "[TRANSIENT] Gathering repo key"
-      get_url:
-        url: https://packages.microsoft.com/keys/microsoft.asc
-        dest: /etc/apt/keyrings/microsoft-linux-signing-key.pub
-        mode: '0644'
-
-    - name: Creating gpg key
-      command:
-        cmd: >
-          gpg --dearmor
-          --output /etc/apt/keyrings/microsoft-linux-signing-key.gpg
-          /etc/apt/keyrings/microsoft-linux-signing-key.pub
-      args:
-        creates: /etc/apt/keyrings/microsoft-linux-signing-key.gpg
-
-    - name: "[TRANSIENT] Cleanup leftover key file"
-      ansible.builtin.file:
-        path: /etc/apt/keyrings/microsoft-linux-signing-key.pub
-        state: absent
-
-    - name: Adding VSCode repo
-      deb822_repository:
-        name: vscode
-        types:
-          - deb
-        uris: https://packages.microsoft.com/repos/vscode
-        suites:
-          - stable
-        components:
-          - main
-        architectures:
-          - amd64
-        signed_by: /etc/apt/keyrings/microsoft-linux-signing-key.gpg
-        enabled: true
-        state: present
+  deb822_repository:
+    name: vscode
+    types:
+      - deb
+    uris: https://packages.microsoft.com/repos/vscode
+    suites:
+      - stable
+    components:
+      - main
+    architectures:
+      - amd64
+    signed_by: /etc/apt/keyrings/microsoft-linux-signing-key.gpg
+    enabled: true
+    state: present
 
 
-- name: Install VSCode
+- name: Install VisualStudio Code
   become: true
   apt:
     pkg:

@@ -1,4 +1,8 @@
 ---
+- name: Install Microsoft keys
+  import_tasks: ../keys/ms_keys.yml
+  when: ansible_distribution == "Debian"
+
 - name: Install text editors
   import_tasks: editors.yml
   when: ansible_distribution == "Debian"

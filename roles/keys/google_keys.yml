@@ -1,0 +1,36 @@
+- name: Add Google gpg keys
+  become: true
+  block:
+    - name: Ensure keyring folder exist
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: 0755
+
+    - name: Installing dependencies
+      apt:
+        pkg:
+          - python3-debian
+          - python3-apt
+        state: present
+        update_cache: yes
+
+    - name: "[TRANSIENT] Gathering repo key"
+      get_url:
+        url: https://dl.google.com/linux/linux_signing_key.pub
+        dest: /etc/apt/keyrings/google-linux-signing-key.pub
+        mode: '0644'
+
+    - name: Creating gpg key
+      command:
+        cmd: >
+          gpg --dearmor
+          --output /etc/apt/keyrings/google-linux-signing-key.gpg
+          /etc/apt/keyrings/google-linux-signing-key.pub
+      args:
+        creates: /etc/apt/keyrings/google-linux-signing-key.gpg
+
+    - name: "[TRANSIENT] Cleanup leftover key file"
+      file:
+        path: /etc/apt/keyrings/google-linux-signing-key.pub
+        state: absent
