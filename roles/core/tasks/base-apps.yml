@@ -13,3 +13,33 @@
     state: present
     update_cache: true
 
+#
+# @note: discard any packages or dependencies that might be related to other distros or are very heavy
+#
+- name: Block package pollution via apt pins
+  become: true
+  vars:
+    blocked_packages:
+      - gnome*
+  copy:
+    dest: /etc/apt/preferences.d/99-blocklist
+    mode: '0644'
+    content: |
+      {% for pkg in blocked_packages %}
+      Package: {{ pkg }}
+      Pin: release *
+      Pin-Priority: -1
+
+      {% endfor %}
+
+#
+# @note: dont install recommends and suggestions by default#
+#
+- name: Disable Install-Recommends and Install-Suggests
+  become: true
+  copy:
+    dest: /etc/apt/apt.conf.d/90no-recommends
+    mode: '0644'
+    content: |
+      APT::Install-Recommends "false";
+      APT::Install-Suggests "false";
