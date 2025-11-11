@@ -1,4 +1,4 @@
-- name: Add Google gpg keys
+- name: Add Opensuse gpg keys
   become: true
   block:
     - name: Ensure keyring folder exist
@@ -17,25 +17,25 @@
 
     - name: "[TRANSIENT] Gathering repo key"
       get_url:
-        url: https://dl.google.com/linux/linux_signing_key.pub
-        dest: /etc/apt/keyrings/google-linux-signing-key.pub
+        url: https://download.opensuse.org/repositories/home:justkidding/Debian_13/Release.key
+        dest: /etc/apt/keyrings/ueberzugpp-Release.key
         mode: '0644'
 
     - name: Creating gpg key
       command:
         cmd: >
           gpg --dearmor
-          --output /etc/apt/keyrings/google-linux-signing-key.gpg
-          /etc/apt/keyrings/google-linux-signing-key.pub
+          --output /etc/apt/keyrings/ueberzugpp-Release.gpg
+          /etc/apt/keyrings/ueberzugpp-Release.key
       args:
-        creates: /etc/apt/keyrings/google-linux-signing-key.gpg
+        creates: /etc/apt/keyrings/ueberzugpp-Release.gpg
 
     - name: "[TRANSIENT] Cleanup leftover key file"
       file:
-        path: /etc/apt/keyrings/google-linux-signing-key.pub
+        path: /etc/apt/keyrings/ueberzugpp-Release.key
         state: absent
 
     - name: "Storing gpg key"
       set_fact:
         "{{ output_gpg_key }}":
-          path: "/etc/apt/keyrings/google-linux-signing-key.gpg"
+          path: "/etc/apt/keyrings/ueberzugpp-Release.gpg"

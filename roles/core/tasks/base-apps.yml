@@ -4,8 +4,9 @@
   apt:
     pkg:
       - libfuse2  # for running AppImage
+      - fzf       # fuzzy finder
+      - xclip
       - tmux
-      - vim
       - git
       - gitk
       - btop

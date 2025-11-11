@@ -1,8 +1,12 @@
 ---
 - name: Install Microsoft keys
   import_tasks: ../keys/ms_keys.yml
+  vars:
+    output_gpg_key: gpg_key
   when: ansible_distribution == "Debian"
 
 - name: Install text editors
   import_tasks: editors.yml
+  vars:
+    gpg_key: "{{ gpg_key }}"
   when: ansible_distribution == "Debian"

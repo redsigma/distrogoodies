@@ -12,7 +12,7 @@
       - main
     architectures:
       - amd64
-    signed_by: /etc/apt/keyrings/microsoft-linux-signing-key.gpg
+    signed_by: "{{ gpg_key.path }}"
     enabled: true
     state: present
 

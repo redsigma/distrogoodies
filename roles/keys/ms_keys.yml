@@ -34,3 +34,8 @@
       file:
         path: /etc/apt/keyrings/microsoft-linux-signing-key.pub
         state: absent
+
+    - name: "Storing gpg key"
+      set_fact:
+        "{{ output_gpg_key }}":
+          path: "/etc/apt/keyrings/microsoft-linux-signing-key.gpg"
