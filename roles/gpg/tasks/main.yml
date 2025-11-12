@@ -1,0 +1,31 @@
+---
+- name: Ensure keyring folder exist
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: 0755
+
+
+- name: Installing dependencies
+  become: true
+  apt:
+    pkg:
+      - python3-debian
+      - python3-apt
+    state: present
+    update_cache: yes
+
+
+- name: Install Microsoft keys
+  import_tasks: ms_gpg.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Install Google keys
+  import_tasks: google_gpg.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Install Third Party keys (Neovim image viewer)
+  import_tasks: ueberzugpp_gpg.yml
+  when: ansible_distribution == "Debian"

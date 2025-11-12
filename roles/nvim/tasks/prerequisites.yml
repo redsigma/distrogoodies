@@ -1,5 +1,4 @@
 ---
-
 #
 #  @note: will add files under /etc/apt/sources.list.d
 #
@@ -14,7 +13,7 @@
       - /             # this is a flat repo
     architectures:
       - amd64
-    signed_by: "{{ gpg_key.path }}"
+    signed_by: "{{ ueberzugpp_gpg }}"
     enabled: true
     state: present
 

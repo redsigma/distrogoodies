@@ -1,0 +1,26 @@
+- name: Preparing Microsoft gpg keys
+  set_fact:
+    ms_gpg: "/etc/apt/keyrings/microsoft-linux-signing-key.gpg"
+
+- name: Add Microsoft gpg keys
+  become: true
+  block:
+    - name: "[TRANSIENT] Gathering repo key"
+      get_url:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        dest: /etc/apt/keyrings/microsoft-linux-signing-key.pub
+        mode: '0644'
+
+    - name: Creating gpg key
+      command:
+        cmd: >
+          gpg --dearmor
+          --output "{{ ms_gpg }}"
+          /etc/apt/keyrings/microsoft-linux-signing-key.pub
+      args:
+        creates: "{{ ms_gpg }}"
+
+    - name: "[TRANSIENT] Cleanup leftover key file"
+      file:
+        path: /etc/apt/keyrings/microsoft-linux-signing-key.pub
+        state: absent
