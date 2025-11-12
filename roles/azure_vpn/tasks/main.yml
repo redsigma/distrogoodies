@@ -1,16 +1,4 @@
-# ---
-# - name: Install Neovim image viewer keys
-#   import_tasks: ../keys/ueberzugpp_keys.yml
-#   vars:
-#     output_gpg_key: gpg_key
-#   when: ansible_distribution == "Debian"
-
-# - name: Install Neovim prerequisites
-#   import_tasks: prerequisites.yml
-#   vars:
-#     gpg_key: "{{ gpg_key }}"
-#   when: ansible_distribution == "Debian"
-
-# - name: Install neovim
-#   import_tasks: neovim.yml
-#   when: ansible_distribution == "Debian"
+---
+- name: Install Azure VPN
+  import_tasks: azure_vpn.yml
+  when: ansible_distribution == "Debian"

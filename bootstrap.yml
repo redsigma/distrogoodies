@@ -51,7 +51,7 @@
     #
     # @optional
     #
-    # - name: Install Azure VPN Client
-    #   tags: azure_vpn
-    #   import_role:
-    #     name: azure_vpn
+    - name: Install Azure VPN Client
+      tags: azure_vpn
+      import_role:
+        name: azure_vpn
