@@ -1,0 +1,39 @@
+---
+- name: Preparing deb-multimedia gpg keys
+  set_fact:
+    deb_multimedia_gpg: "/usr/share/keyrings/deb-multimedia-keyring.pgp"
+
+
+- name: Download deb-multimedia keyring deb
+  get_url:
+    url: https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2024.9.1_all.deb
+    dest: /tmp/deb-multimedia-keyring.deb
+    mode: "0644"
+
+- name: Install deb-multimedia keyring
+  apt:
+    deb: /tmp/deb-multimedia-keyring.deb
+    state: present
+  become: yes
+
+- name: Add deb-multimedia deb822 repo for trixie
+  deb822_repository:
+    name: deb-multimedia
+    types:
+      - deb
+    uris:
+      - https://www.deb-multimedia.org
+    suites:
+      - trixie
+    components:
+      - main
+      - non-free
+    signed_by: "{{ deb_multimedia_gpg }}"
+    enabled: yes
+  become: yes
+
+
+- name: Cleanup downloaded deb
+  file:
+    path: /tmp/deb-multimedia-keyring.deb
+    state: absent

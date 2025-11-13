@@ -1,0 +1,129 @@
+---
+
+# - name: Adding OBS codec repo (libavcode6)
+#   become: true
+#   deb822_repository:
+#     name: deb-multimedia
+#     types:
+#       - deb
+#     uris: https://www.deb-multimedia.org
+#     suites:
+#       - trixie
+#     components:
+#       - main
+#       - non-free
+#     architectures:
+#       - amd64
+#     signed_by: "{{ deb_multimedia_gpg }}"
+#     enabled: true
+#     state: present
+
+
+# - name: Download OBS Studio 30.2.3
+#   get_url:
+#     url: https://github.com/obsproject/obs-studio/releases/download/30.2.3/OBS-Studio-30.2.3-Ubuntu-24.04-x86_64.deb
+#     dest: /tmp/obs-studio.deb
+#     mode: "0644"
+
+
+# - name: Install OBS Studio from deb
+#   become: yes
+#   apt:
+#     deb: /tmp/obs-studio.deb
+#     update_cache: yes
+#     state: present
+
+
+# - name: Cleanup downloaded deb
+#   file:
+#     path: /tmp/obs-studio.deb
+#     state: absent
+
+# - name: Install OBS
+#   become: true
+#   apt:
+#     pkg:
+#       - obs-studio
+#     update_cache: yes
+#     state: present
+
+- name: Install Flatpak
+  become: yes
+  apt:
+    name: flatpak
+    state: present
+    update_cache: yes
+  
+
+- name: Add flathub remote to Flatpak
+  command:
+    cmd: flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  register: flatpak_remote_add
+  changed_when: "'configured' in flatpak_remote_add.stdout or flatpak_remote_add.rc == 0"
+
+
+- name: Install OBS Studio (Flatpak)
+  command: >
+    flatpak --user install -y flathub com.obsproject.Studio
+  environment:
+    FLATPAK_NONINTERACTIVE: "1"
+  register: flatpak_obs_install
+  changed_when: "'installed' in flatpak_obs_install.stdout
+                 or 'upgraded' in flatpak_obs_install.stdout
+                 or flatpak_obs_install.rc == 0"
+
+
+- name: Revert OBS Studio to 31.1.2 (Flatpak)
+  command: >
+    flatpak --user update -y --commit=4249e4245f75bbec5ad89a4bcfb2726ecbe54c7f3a642e6dbe2820ff4ac2dbc9 com.obsproject.Studio
+  environment:
+    FLATPAK_NONINTERACTIVE: "1"
+  register: flatpak_obs_install
+  changed_when: "'installed' in flatpak_obs_install.stdout
+                 or 'upgraded' in flatpak_obs_install.stdout
+                 or flatpak_obs_install.rc == 0"
+
+
+- name: Disable updates to OBS Studio (Flatpak)
+  command: >
+    flatpak --user mask com.obsproject.Studio
+  environment:
+    FLATPAK_NONINTERACTIVE: "1"
+  register: flatpak_obs_install
+  changed_when: "'installed' in flatpak_obs_install.stdout
+                 or 'upgraded' in flatpak_obs_install.stdout
+                 or flatpak_obs_install.rc == 0"
+
+
+- name: Check OBS dekstop shorcut exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/share/flatpak/app/com.obsproject.Studio/current/active/export/share/applications/com.obsproject.Studio.desktop"
+  register: obs_shortcut
+
+#
+#  @note: 
+#   - path to files is in ~/.local/share/flatpak/app/com.obsproject.Studio/current/active/files/
+#   - you have to use propietary nvidia for obs. Nouveau or NVK seem to crash X11
+#      - use below commands in order
+#
+#   sudo sed -i 's/main/main non-free contrib/g' /etc/apt/sources.list
+#   sudo apt install linux-image-amd64 linux-headers-amd64   ## required else `sudo dkms status` wont show `installed`
+#   sudo apt install nvidia-driver
+#
+#
+- name: Create OBS Studio shortcut
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/obs-studio.desktop"
+    mode: "0600"
+    content: |
+      #!/usr/bin/env xdg-open
+      [Desktop Entry]
+      Version=1.0
+      Type=Application
+      Name=OBS Studio
+      Exec=flatpak --user run --branch=stable --arch=x86_64 --command=obs com.obsproject.Studio
+      Icon=com.obsproject.Studio
+      Terminal=false
+      Categories=AudioVideo;Recorder;Video;Streaming;
+      StartupWMClass=com.obsproject.Studio
+  when: not obs_shortcut.stat.exists

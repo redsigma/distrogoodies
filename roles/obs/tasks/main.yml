@@ -1,0 +1,4 @@
+---
+- name: Install OBS
+  import_tasks: obs_flatpak.yml
+  when: ansible_distribution == "Debian"

@@ -49,8 +49,14 @@
         name: nvim
 
     #
-    # @optional
+    # @optionals
     #
+
+    - name: Install OBS
+      tags: obs
+      import_role:
+        name: obs
+
     - name: Install Azure VPN Client
       tags: azure_vpn
       import_role:
