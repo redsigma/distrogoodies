@@ -1,0 +1,22 @@
+---
+- name: Ensure fontconfig cache is present
+  become: true
+  package:
+    state: present
+    name:
+    - fontconfig
+  when: ansible_distribution == "Debian"
+
+
+- name: Download and extract fonts
+  include_tasks: "download-fonts.yml"
+  loop: "{{ installed_fonts }}"
+  loop_control:
+    loop_var: font
+  when: ansible_distribution == "Debian"
+
+
+- name: Update font cache
+  shell: fc-cache -f
+  changed_when: false
+  when: ansible_distribution == "Debian"

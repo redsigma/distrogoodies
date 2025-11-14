@@ -31,6 +31,12 @@
         name: gpg
 
 
+    - name: Install fonts
+      tags: fonts
+      import_role:
+        name: fonts
+
+
     - name: Install web browsers
       tags: browser
       import_role:
