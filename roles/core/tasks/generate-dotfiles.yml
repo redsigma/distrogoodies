@@ -4,13 +4,6 @@
     user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.env.USER) }}"
 
 
-# - name: Gather templated dotfiles
-#   find:
-#     paths: "templates"
-#     file_type: file
-#     hidden: yes
-#   register: found_files
-
 - name: Gather folder structure of dotfiles
   find:
     paths: "{{ playbook_dir }}/templates"
@@ -41,53 +34,12 @@
     label: "{{ item.path }}"
 
 
-- name: Ensure ~/.dotfiles directory exists
-  file:
-    path: "/home/{{ user }}/.dotfiles/"
-    state: directory
-
-
-- name: Mirroring dotfiles folder structure under ~/.dotfiles
-  file:
-    path: >-
-      {{ item.path
-         | regex_replace(
-             '^' ~ ((playbook_dir ~ '/templates') | regex_escape),
-             (ansible_env.HOME ~ '/.dotfiles')
-           )
-      }}
-    state: directory
-  loop: "{{ found_folders.files }}"
-  loop_control:
-    label: >-                                   # output: src_path -> dest_path
-      ./{{ item.path | relpath(playbook_dir) }}
-      -> ~/.dotfiles/{{ item.path | relpath(playbook_dir ~ '/templates') }}
-
-
-- name: Generate templated dotfiles
-  become_user: "{{ user }}"
-  template:
-    src: "{{ item }}"
-    dest: "/home/{{ user }}/.dotfiles/{{ item }}"
-  loop:
-
-    # core configs
-    - ".stow-local-ignore"
-    - "profile/.bashrc"
-    - "profile/.profile"
-    - "profile/.inputrc"
-    - "profile/.hushlogin"
-    - "xresources/.Xresources"
-
-    # tmux config
-    - "tmux/.tmux.conf"
-  loop_control:
-    label: "~/.dotfiles/{{ item }}"
-
-
 - name: Preparing dotfiles folder under ~/.config 
   set_fact:
     dotfiles_folders:
+      - profile
+      - xresources
+      - tmux
       - nvim
       - git
 
@@ -107,6 +59,23 @@
   loop: "{{ dotfiles_folders }}"
   loop_control:
     loop_var: folder_name
+
+
+- name: Ensure dotfiles folders exist under ~/.dotfiles
+  become_user: "{{ user }}"
+  file:
+    path: "/home/{{ user }}/.dotfiles/{{ folder_name }}"
+    state: directory
+  loop: "{{ dotfiles_folders }}"
+  loop_control:
+    loop_var: folder_name
+
+
+- name: Ensure stow ignores exists
+  become_user: "{{ user }}"
+  copy:
+    src: "templates/stow/.stow-local-ignore"
+    dest: "/home/{{ user }}/.dotfiles/.stow-local-ignore"
 
 
 - name: Generate configs (folder only)
