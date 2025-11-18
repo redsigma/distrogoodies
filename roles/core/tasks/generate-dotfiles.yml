@@ -79,38 +79,53 @@
     - "profile/.hushlogin"
     - "xresources/.Xresources"
 
-    # git config
-    - "git/.gitconfig"
-
     # tmux config
     - "tmux/.tmux.conf"
   loop_control:
     label: "~/.dotfiles/{{ item }}"
 
 
-#
-#  Neovim configs
-#
-- name: Generate Neovim configs (folder only)
+- name: Preparing dotfiles folder under ~/.config 
+  set_fact:
+    dotfiles_folders:
+      - nvim
+      - git
+
+
+- name: Gather files under dotfiles folder
+  set_fact:
+    dotfiles_items: >-
+      {{
+        (dotfiles_items | default([]))
+        +
+        (
+          lookup('ansible.builtin.filetree', 'templates/' ~ folder_name, wantlist=True)
+          | map('combine', {'folder_name': folder_name})
+          | list
+        )
+      }}
+  loop: "{{ dotfiles_folders }}"
+  loop_control:
+    loop_var: folder_name
+
+
+- name: Generate configs (folder only)
   become_user: "{{ user }}"
   file:
-    path: "/home/{{ user }}/.dotfiles/{{ folder_name }}/{{ item.path }}"
+    path: "/home/{{ user }}/.dotfiles/{{ item.folder_name }}/{{ item.path }}"
     state: directory
-  with_filetree: "templates/{{ folder_name }}"
-  vars:
-    folder_name: "nvim"
+  loop: "{{ dotfiles_items }}"
   when: item.state == 'directory'
   loop_control:
-    label: "~/{{ item.path }}"
+    label: "~/{{ item.folder_name }}/{{ item.path }}"
 
-- name: Generate Neovim configs (files from template)
+
+- name: Generate configs (files from template)
   become_user: "{{ user }}"
   template:
     src: "{{ item.src }}"
-    dest: "/home/{{ user }}/.dotfiles/{{ folder_name }}/{{ item.path }}"
-  with_filetree: "templates/{{ folder_name }}"
-  vars:
-    folder_name: "nvim"
+    dest: "/home/{{ user }}/.dotfiles/{{ item.folder_name }}/{{ item.path }}"
+  loop: "{{ dotfiles_items }}"
   when: item.state == 'file'
   loop_control:
-    label: "~/{{ item.path }}"
+    label: "~/{{ item.folder_name }}/{{ item.path }}"
