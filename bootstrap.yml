@@ -13,6 +13,15 @@
   hosts: localhost
   tasks:
 
+
+    - name: run the secret task
+      debug:
+        msg: "This only runs when you tag it"
+      tags: 
+        - never
+        - secret_run
+
+
     - name: Install core apps
       tags: core
       import_role:
