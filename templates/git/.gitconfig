@@ -1,0 +1,103 @@
+[credential] # https://github.com/git-ecosystem/git-credential-manager/blob/main/docs/configuration.md
+  helper = manager
+
+[core]
+#   pager = delta  # compare with nvimdiff
+  editor = vim
+  attributesfile = ~/.gitattributes
+
+[commit]
+  verbose = true
+
+[mergetool]
+	tool = vscode
+	keepbackup = false
+
+[merge]
+    tool = vscode
+    # tool = meld
+
+[mergetool "vscode"]
+    cmd = code --wait --merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
+
+[push]
+    default = current
+
+[rebase]
+    autosquash = true
+    autoStash = true
+
+[blame]
+    date = relative
+
+
+[interactive]
+    diffFilter = delta --color-only
+
+[add.interactive]
+    useBuiltin = false # required for git 2.37.0
+
+
+[delta]
+    navigate = true # use n and N to move between diff sections
+    light = false   # set to true if you're in a terminal w/ a light bgcolor (e.g. macOS terminal)
+    side-by-side = true
+
+[diff]
+    colorMoved = default
+
+[pull]
+	rebase = true
+
+
+#
+# Tools setup
+#
+
+[difftool "sourcetree"]
+	cmd = "'' "
+	keepBackup = false
+  	keepTemporaries = false
+	trustExitCode = true
+
+[mergetool "sourcetree"]
+	cmd = "'' "
+	trustExitCode = true
+	keepBackup = false
+
+[mergetool "vscode"]
+	cmd = "f(){ dir="$(dirname "/c/apps/dev/code/Code.exe")" && \"$dir\\Code.exe\" --new-window --wait --merge \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\" --extensions-dir \"$dir\\profiles_data\\mergetool\\exts\"  --user-data-dir \"$dir\\profiles_data\\mergetool\\data\" ;}; f"
+	keepBackup = false
+  	keepTemporaries = false
+	trustExitCode = true
+
+
+#####################################################################
+# Aliases - Shortcut for opening sourcetree
+#   - also checks if current dir or subdir is part of a git repo
+#
+[alias]
+	opensourcetree = "!f() { dir="%cd%"; start \"\" \"%localappdata%\\SourceTree\\SourceTree.exe\" -f \"$dir\"; }; f" # windows style path, C:\path
+	# opensourcetree = !"f(){ dir="$(pwd)" && start \"\" \"%localappdata%\\SourceTree\\SourceTree.exe\"  -f \"$dir\" ;}; f" # unix style path, /c/path
+	st = !"f(){ branch_name="$(git branch --show-current)" && return_code="$?" && [ \"$return_code\" != 128 ] && echo Opening SourceTree \"$branch_name\" && git opensourcetree; }; f"
+
+[alias]
+    co = checkout
+    st = status
+    rh = reset --hard
+    rs = reset --soft
+    rr = reset --mixed
+    recent = branch --sort=-committerdate
+    undo = reset --soft HEAD^
+    recommit = commit --reedit-message ORIG_HEAD
+    track = branch --set-upstream-to
+    difft = -c diff.external=difft diff
+    pushf = pu
+
+
+#####################################################################
+#
+# Includes
+#
+[includeIf "gitdir:~/work/"]
+    path = ~/work/.gitconfig
