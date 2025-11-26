@@ -25,3 +25,8 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+
+# set PATH so it includes user's private apps if it exists
+if [ -d "$HOME/apps/bin" ] ; then
+    PATH="$HOME/apps/bin:$PATH"
+fi
