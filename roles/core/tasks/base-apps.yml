@@ -5,12 +5,18 @@
     pkg:
       - libfuse2  # for running AppImage
       - fzf       # fuzzy finder
+      - jq        # needed for various scripts
       - xclip
       - tmux
       - git
       - gitk
       - btop
       - brightnessctl
+      #
+      # python system packages
+      #
+      - python3-pip
+      - python3-dotenv
     state: present
     update_cache: true
 

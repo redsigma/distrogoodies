@@ -1,0 +1,4 @@
+---
+- name: Install hashicorp vault
+  import_tasks: vault.yml
+  when: ansible_distribution == "Debian"

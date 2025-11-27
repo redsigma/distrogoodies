@@ -29,3 +29,8 @@
 - name: Install Third Party keys (Neovim image viewer)
   import_tasks: ueberzugpp_gpg.yml
   when: ansible_distribution == "Debian"
+
+
+- name: Install Hashicorp keys
+  import_tasks: hashicorp_gpg.yml
+  when: ansible_distribution == "Debian"
