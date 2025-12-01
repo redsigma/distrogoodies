@@ -75,3 +75,9 @@
       tags: hashicorp_vault
       import_role:
         name: secret-manager
+
+
+    - name: Install Postman
+      tags: postman
+      import_role:
+        name: postman

@@ -1,0 +1,57 @@
+---
+- name: Check Postman is installed
+  stat:
+    path: /opt/postman/Postman
+    follow: yes
+  register: postman_stat
+
+
+- name: Install Postman
+  become: true
+  block:
+    - name: Ensure postman directory exists
+      file:
+        path: /opt/postman
+        state: directory
+
+
+    - name: Download Postman
+      get_url:
+        url: https://dl.pstmn.io/download/latest/linux64
+        dest: /opt/postman/postman.tar.gz
+        mode: '0644'
+
+
+    - name: Extract Postman into /opt
+      unarchive:
+        src: /opt/postman/postman.tar.gz
+        dest: /opt/postman
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+
+
+    - name: Cleanup install files
+      file:
+        path: /opt/postman/postman.tar.gz
+        state: absent
+
+
+    - name: Update Postman shortcut
+      copy:
+        dest: "{{ ansible_env.HOME }}/.local/share/applications/postman.desktop"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0600"
+        content: |
+          #!/usr/bin/env xdg-open
+          [Desktop Entry]
+          Version=1.0
+          Type=Application
+          Name=Postman
+          Encoding=UTF-8
+          Exec=/opt/postman/Postman
+          Icon=/opt/postman/app/resources/app/assets/icon.png
+          Terminal=false
+          Categories=Development;
+
+  when: postman_stat.stat.exists == False

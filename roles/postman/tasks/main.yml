@@ -1,0 +1,4 @@
+---
+- name: Install postman
+  import_tasks: postman.yml
+  when: ansible_distribution == "Debian"
