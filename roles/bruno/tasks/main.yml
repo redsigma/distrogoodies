@@ -1,0 +1,4 @@
+---
+- name: Install Bruno
+  import_tasks: bruno.yml
+  when: ansible_distribution == "Debian"

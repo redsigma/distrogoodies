@@ -81,3 +81,9 @@
       tags: postman
       import_role:
         name: postman
+
+    - name: Install Bruno
+      tags: bruno
+      import_role:
+        name: bruno
+

@@ -1,0 +1,27 @@
+---
+- name: Check bruno is installed
+  package_facts:
+    manager: auto
+
+
+- name: Install bruno
+  block:
+    - name: Download bruno deb
+      get_url:
+        url: "https://github.com/usebruno/bruno/releases/download/v2.15.0/bruno_2.15.0_amd64_linux.deb"
+        dest: "/tmp/bruno.deb"
+        mode: '0644'
+
+    - name: Install bruno deb
+      become: yes
+      apt:
+        deb: "/tmp/bruno.deb"
+        state: present
+
+    - name: Remove downloaded deb
+      file:
+        path: "/tmp/bruno.deb"
+        state: absent
+
+
+  when: "'bruno' not in ansible_facts.packages"
