@@ -14,8 +14,16 @@
       - "difft"
 
 
+- name: Install deskflow
+  become: true
+  apt:
+    deb: https://github.com/deskflow/deskflow/releases/download/v1.25.0/deskflow-1.25.0-debian-trixie-x86_64.deb
+    state: present
+
+
 - name: Install fblog
   get_url:
     url: "https://github.com/brocode/fblog/releases/download/v4.17.0/fblog"
     dest: "{{ ansible_env.HOME }}/.local/bin/fblog"
     mode: "0755"
+
