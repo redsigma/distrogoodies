@@ -61,12 +61,7 @@ beep_on_error() {
     echo -ne '\a'
   fi
 }
-export PROMPT_COMMAND="beep_on_error"
-
-# enable color support of ls
-if [ -x /usr/bin/dircolors ]; then
-  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-fi
+# export PROMPT_COMMAND="beep_on_error"
 
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -137,5 +132,15 @@ fi
 
 # configure tmux
 if [ -f ~/.tmux/tmux_bash_completion ]; then
-  source ~/.tmux/tmux_bash_completion
+  . ~/.tmux/tmux_bash_completion
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# set PATH so it includes user's private apps if it exists
+if [ -d "$HOME/apps/bin" ] ; then
+    PATH="$HOME/apps/bin:$PATH"
 fi
