@@ -36,12 +36,24 @@
 
 - name: Preparing dotfiles folder under ~/.config 
   set_fact:
-    dotfiles_folders:
-      - profile
-      - xresources
-      - tmux
-      - nvim
-      - git
+    dotfiles_exclude_folders:
+      - stow
+
+
+- name: Gather dotfiles folders
+  set_fact:
+    dotfiles_folders: >-
+      {{
+        (
+          lookup('ansible.builtin.filetree', 'templates/', wantlist=True)
+          | selectattr('state', 'equalto', 'directory')
+          | map(attribute='path')
+          | map('split', '/')
+          | map('first')
+          | unique
+          | difference(dotfiles_exclude_folders | default([]))
+        )
+      }}
 
 
 - name: Gather files under dotfiles folder
