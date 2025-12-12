@@ -1,25 +1,37 @@
 ---
-- name: Check if font {{ font }} exists or empty
+- name: Check {{ font }} directory exists
+  ansible.builtin.stat:
+    path: "/usr/local/share/fonts/{{ font }}"
+  register: font_stat
+
+
+- name: Check font {{ font }} has files
   find:
     paths: "/usr/local/share/fonts/{{ font }}"
-    file_type: directory
+    patterns:
+      - "*.ttf"
+      - "*.otf"
+      - "*.ttc"
+    file_type: file
     hidden: true
-  register: font_dir
+  register: font_files
+  when: font_stat.stat.isdir | default(false)
 
 
-- name: Create directory for {{ font }}
-  become: true
-  file:
-    path: "/usr/local/share/fonts/{{ font }}"
-    mode: 0775
-    state: directory
-  
+- name: Download and install {{ font }}
+  block:
+    - name: Create directory for {{ font }}
+      become: true
+      file:
+        path: "/usr/local/share/fonts/{{ font }}"
+        mode: 0775
+        state: directory
+      
 
-- name: Download and extract {{ font }}
-  become: true
-  unarchive:
-    src: "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/{{ font }}.tar.xz"
-    dest: "/usr/local/share/fonts/{{ font }}"
-    remote_src: true
-  when: font_dir.matched == 0
-
+    - name: Download and extract {{ font }}
+      become: true
+      unarchive:
+        src: "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/{{ font }}.tar.xz"
+        dest: "/usr/local/share/fonts/{{ font }}"
+        remote_src: true
+  when: (font_files.matched | default(0)) == 0
