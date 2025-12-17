@@ -130,9 +130,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# configure tmux
-if [ -f ~/.tmux/tmux_bash_completion ]; then
-  . ~/.tmux/tmux_bash_completion
+if [ -d "$HOME/.config/.bashrc.d" ]; then
+  for f in "$HOME/.config/.bashrc.d/"*.sh; do
+    [ -r "$f" ] && . "$f"
+  done
 fi
 
 # set PATH so it includes user's private bin if it exists
