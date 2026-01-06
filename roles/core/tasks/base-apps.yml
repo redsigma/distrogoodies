@@ -50,3 +50,12 @@
     content: |
       APT::Install-Recommends "false";
       APT::Install-Suggests "false";
+
+#
+# @note: safety guards to make sure known folders exist
+# These might be used by future roles
+#
+- name: Ensure ~/.local/bin directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.local/bin"
+    state: directory

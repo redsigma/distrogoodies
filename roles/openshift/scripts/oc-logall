@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<USAGE
+Usage:
+  oc logall -n <namespace> <pod> [--no-init] [--no-ephemeral] [--no-containers] [-- <oc logs args...>]
+
+Defaults:
+  - includes regular containers
+  - includes init containers
+  - includes ephemeral containers
+
+Disable flags (plugin-only):
+  --no-init        Exclude init containers
+  --no-ephemeral   Exclude ephemeral containers
+  --no-containers  Exclude regular containers
+
+Notes:
+  - Any args not recognized by this plugin are forwarded to: oc logs
+  - Use "--" to explicitly separate plugin flags from oc logs flags
+
+Examples:
+  oc logall -n myns mypod --previous
+  oc logall -n myns mypod --no-ephemeral --previous
+  oc logall mypod -n myns --no-init --since=10m
+  oc logall -n myns mypod --no-init --no-ephemeral -- --previous
+USAGE
+  exit 1
+}
+
+namespace=""
+pod=""
+
+include_init=true
+include_ephemeral=true
+include_containers=true
+
+extra_args=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n|--namespace)
+      [[ $# -ge 2 ]] || usage
+      namespace="$2"
+      shift 2
+      ;;
+    --no-init)
+      include_init=false
+      shift
+      ;;
+    --no-ephemeral)
+      include_ephemeral=false
+      shift
+      ;;
+    --no-containers)
+      include_containers=false
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    --)
+      shift
+      extra_args+=("$@")
+      break
+      ;;
+    -*)
+      # unknown flag -> forward to oc logs
+      extra_args+=("$1")
+      shift
+      ;;
+    *)
+      if [[ -z "$pod" ]]; then
+        pod="$1"
+      else
+        extra_args+=("$1")
+      fi
+      shift
+      ;;
+  esac
+done
+
+#
+# If namespace not explicitly provided, try current context namespace
+#
+if [[ -z "$namespace" ]]; then
+  namespace=$(oc config view --minify -o jsonpath='{.contexts[0].context.namespace}' 2>/dev/null || true)
+fi
+
+[[ -n "$namespace" && -n "$pod" ]] || usage
+
+
+container_list="$(
+  oc get pod -n "$namespace" "$pod" -o jsonpath='
+{range .spec.initContainers[*]}init:{.name}{"\n"}{end}
+{range .spec.containers[*]}container:{.name}{"\n"}{end}
+{range .spec.ephemeralContainers[*]}ephemeral:{.name}{"\n"}{end}
+'
+)"
+
+#
+# Log printing
+#
+while IFS=: read -r type name; do
+  [[ -z "$name" ]] && continue
+
+  case "$type" in
+    init) $include_init || continue ;;
+    container)  $include_containers || continue ;;
+    ephemeral)  $include_ephemeral || continue ;;
+    *)    continue ;;
+  esac
+
+  echo
+  echo "===== ${type^^}: $name ====="
+  if ! oc logs -n "$namespace" "$pod" -c "$name" "${extra_args[@]}"; then
+    echo "----- failed to fetch logs for ${type}:${name} -----" >&2
+  fi
+done <<< "$container_list"

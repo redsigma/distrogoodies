@@ -56,7 +56,7 @@
         name: nvim
 
     #
-    # @optionals
+    # @optional apps
     #
 
     - name: Install OBS
@@ -87,3 +87,11 @@
       import_role:
         name: bruno
 
+    #
+    # @optional scripts
+    #
+
+    - name: Install Openshift scripts
+      tags: openshift
+      import_role:
+        name: openshift

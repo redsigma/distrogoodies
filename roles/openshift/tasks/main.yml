@@ -1,0 +1,4 @@
+---
+- name: Install Openshift scripts
+  import_tasks: openshift.yml
+  when: ansible_distribution == "Debian"

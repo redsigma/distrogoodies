@@ -1,0 +1,31 @@
+---
+- name: Gathering user
+  set_fact:
+    user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.env.USER) }}"
+
+
+- name: Gather openshift scripts
+  find:
+    paths: "{{ role_path }}/scripts/"
+    file_type: file
+    recurse: true
+    hidden: true
+  register: found_files
+
+
+- name: "[TRANSIENT] Apply LF endings"
+  replace:
+    path: "{{ item.path }}"
+    regexp: "\r$"
+    replace: ""
+  loop: "{{ found_files.files | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+
+- name: Copy all openshift scripts
+  copy:
+    src: "{{ role_path }}/scripts/"
+    dest: "/home/{{ user }}/.local/bin/"
+    mode: "0755"
+
