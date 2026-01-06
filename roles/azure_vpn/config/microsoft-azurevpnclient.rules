@@ -1,0 +1,9 @@
+polkit.addRule(function (action, subject) {
+    var execPath = polkit.spawn(["cat", "/proc/" + subject.pid + "/cmdline"]);
+
+    if ((action.id == "org.freedesktop.resolve1.set-dns-servers" || action.id == "org.freedesktop.resolve1.set-domains") && execPath == "/opt/microsoft/microsoft-azurevpnclient/microsoft-azurevpnclient") {
+        polkit.log("action=" + action);
+        polkit.log("subject=" + subject);
+        return polkit.Result.YES;
+    }
+});

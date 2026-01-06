@@ -8,7 +8,7 @@
     uris: https://packages.microsoft.com/ubuntu/22.04/prod
     suites:
       - jammy   # Ubuntu 22.04 Jammy
-    components: 
+    components:
       - main
     architectures:
       - amd64
@@ -26,3 +26,24 @@
     state: present
 
 
+- name: Check Azure VPN client binary exists
+  stat:
+    path: /opt/microsoft/microsoft-azurevpnclient/microsoft-azurevpnclient
+  register: azurevpn_bin
+
+#
+# CAP_NET_ADMIN → can mess with networking:
+# - change routes
+# - configure interfaces
+# - tweak DNS on links
+#
+# CAP_NET_RAW → can open raw sockets:
+# - needed for stuff like ping, some VPN tunneling bits, etc.
+#
+- name: Set capabilities on Azure VPN client binary
+  become: true
+  capabilities:
+    path: /opt/microsoft/microsoft-azurevpnclient/microsoft-azurevpnclient
+    capability: cap_net_admin,cap_net_raw=ep
+    state: present
+  when: azurevpn_bin.stat.exists

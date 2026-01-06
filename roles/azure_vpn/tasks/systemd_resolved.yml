@@ -1,0 +1,20 @@
+---
+- name: Install systemd-resolved
+  become: true
+  apt:
+    pkg:
+      - systemd-resolved
+    update_cache: yes
+    state: present
+
+
+- name: Gather systemd services
+  ansible.builtin.service_facts:
+  when: ansible_service_mgr == 'systemd'
+
+
+- name: Enable systemd-resolved service
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    enabled: true
+  when: "'systemd-resolved.service' in ansible_facts.services"

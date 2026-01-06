@@ -1,4 +1,19 @@
 ---
+- name: Install systemd-resolved dns
+  import_tasks: systemd_resolved.yml
+  when: ansible_distribution == "Debian"
+
+
 - name: Install Azure VPN
   import_tasks: azure_vpn.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Configure polkit rules
+  import_tasks: polkit.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Configure per domain dns
+  import_tasks: domain_dns.yml
   when: ansible_distribution == "Debian"

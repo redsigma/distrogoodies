@@ -1,0 +1,30 @@
+---
+- name: Gather configs files
+  find:
+    paths: "{{ role_path }}/config/"
+    file_type: file
+    recurse: true
+    hidden: true
+  register: found_files
+
+
+- name: "[TRANSIENT] Apply LF endings"
+  replace:
+    path: "{{ item.path }}"
+    regexp: "\r$"
+    replace: ""
+  loop: "{{ found_files.files | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+
+- name: Copy polkit *.rules files
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/share/polkit-1/rules.d/"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  with_fileglob:
+    - "{{ role_path }}/config/*.rules"
