@@ -11,7 +11,7 @@
 - name: Install deskflow
   become: true
   apt:
-    deb: https://github.com/deskflow/deskflow/releases/download/v1.25.0/deskflow-1.25.0-debian-trixie-x86_64.deb
+    deb: https://github.com/deskflow/deskflow/releases/download/continuous/deskflow-continuous-debian-trixie-x86_64.deb
     state: present
 
 
