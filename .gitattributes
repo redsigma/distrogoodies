@@ -2,4 +2,5 @@
 *.conf    text eol=lf
 *.yml     text eol=lf
 *.yaml    text eol=lf
+*.rules   text eol=lf
 templates/**/.* text eol=lf
