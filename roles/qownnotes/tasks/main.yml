@@ -1,0 +1,4 @@
+---
+- name: Install QOwnNotes
+  import_tasks: qownnotes.yml
+  when: ansible_distribution == "Debian"

@@ -87,6 +87,11 @@
       import_role:
         name: bruno
 
+    - name: Install QOwnNotes
+      tags: qownnotes
+      import_role:
+        name: qownnotes
+
     #
     # @optional scripts
     #

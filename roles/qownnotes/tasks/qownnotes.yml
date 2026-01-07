@@ -1,0 +1,38 @@
+---
+- name: Ensure QOwnNotes directory exists
+  become: true
+  file:
+    path: /opt/qownnotes
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+
+
+- name: Install QOwnNotes
+  block:
+    - name: Download QOwnNotes AppImage
+      get_url:
+        url: https://github.com/pbek/QOwnNotes/releases/latest/download/QOwnNotes-x86_64.AppImage
+        dest: /opt/qownnotes/QOwnNotes-x86_64.AppImage
+        mode: '0755'
+
+#
+#  @note:
+#   - in portable mode the settigns, database  and notes are relative to the binary location
+#
+- name: Update QOwnNotes shortcut
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/qownnotes.desktop"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+    content: |
+      #!/usr/bin/env xdg-open
+      [Desktop Entry]
+      Version=1.0
+      Type=Application
+      Name=QOwnNotes
+      Exec=/opt/qownnotes/QOwnNotes-x86_64.AppImage --portable
+      Terminal=false
+      Categories=Notes;
+
