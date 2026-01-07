@@ -1,0 +1,47 @@
+---
+- name: Check Notes data already exists
+  stat:
+    path: /opt/qownnotes/Data/Notes
+  register: notes_data_stat
+
+
+- name: Initialize Notes data
+  become: true
+  block:
+    - name: Create Notes directory
+      file:
+        path: /opt/qownnotes/Data/Notes
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0755"
+
+    - name: Copy Notes data
+      copy:
+        src: config/Data/Notes/
+        dest: /opt/qownnotes/Data/Notes/
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0644"
+  when: not notes_data_stat.stat.exists
+
+
+
+- name: Update config files
+  become: true
+  block:
+    - name: Create config directory
+      file:
+        path: /opt/qownnotes/Data/PBE
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0755"
+
+    - name: Copy config files
+      copy:
+        src: config/Data/PBE/
+        dest: /opt/qownnotes/Data/PBE/
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0644"

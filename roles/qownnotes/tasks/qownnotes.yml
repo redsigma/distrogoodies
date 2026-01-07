@@ -18,7 +18,8 @@
 
 #
 #  @note:
-#   - in portable mode the settigns, database  and notes are relative to the binary location
+#   - in portable mode the settings, database  and notes are relative to the binary location
+#   - need to specify `Path` otherwise it creates portable configs in the wrong place
 #
 - name: Update QOwnNotes shortcut
   copy:
@@ -33,6 +34,7 @@
       Type=Application
       Name=QOwnNotes
       Exec=/opt/qownnotes/QOwnNotes-x86_64.AppImage --portable
+      Path=/opt/qownnotes
       Terminal=false
       Categories=Notes;
 
