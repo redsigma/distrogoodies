@@ -45,3 +45,34 @@
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_gid }}"
         mode: "0644"
+
+
+- name: Update scripts files
+  become: true
+  block:
+    - name: Create scripts directory
+      file:
+        path: /opt/qownnotes/Data/scripts
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0755"
+
+    - name: Copy scripts files
+      copy:
+        src: config/Data/scripts/
+        dest: /opt/qownnotes/Data/scripts/
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0644"
+
+    - name: Copy settings file
+      copy:
+        src: config/Data/QOwnNotes.sqlite
+        dest: /opt/qownnotes/Data/QOwnNotes.sqlite
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0644"
+
+
+
