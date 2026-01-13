@@ -71,6 +71,11 @@
         name: azure_vpn
 
 
+    - name: Install Docker
+      tags: docker
+      import_role:
+        name: docker
+
     - name: Install Hashicorp Vault
       tags: hashicorp_vault
       import_role:
