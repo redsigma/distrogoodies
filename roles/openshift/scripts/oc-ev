@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<USAGE
+Usage:
+  oc ev -n <namespace> <pod>
+
+Defaults:
+  - includes events for pod
+
+Examples:
+  oc ev -n myns mypod
+USAGE
+  exit 1
+}
+
+namespace=""
+pod=""
+
+extra_args=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n|--namespace)
+      [[ $# -ge 2 ]] || usage
+      namespace="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      ;;
+    --)
+      shift
+      extra_args+=("$@")
+      break
+      ;;
+    -*)
+      # unknown flag -> forward to oc logs
+      extra_args+=("$1")
+      shift
+      ;;
+    *)
+      if [[ -z "$pod" ]]; then
+        pod="$1"
+      else
+        extra_args+=("$1")
+      fi
+      shift
+      ;;
+  esac
+done
+
+#
+# If namespace not explicitly provided, try current context namespace
+#
+if [[ -z "$namespace" ]]; then
+  namespace=$(oc config view --minify -o jsonpath='{.contexts[0].context.namespace}' 2>/dev/null || true)
+fi
+
+[[ -n "$namespace" && -n "$pod" ]] || usage
+oc -n "$namespace" get events --field-selector involvedObject.name="$pod" --sort-by='.lastTimestamp' "${extra_args[@]}"
