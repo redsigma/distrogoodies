@@ -2,12 +2,12 @@
 - name: Adding Docker repo
   become: true
   deb822_repository:
-    name: vscode
+    name: docker
     types:
       - deb
-    uris: https://download.docker.com/linux/debian
+    uris: https://download.docker.com/linux/debian/
     suites:
-      - stable
+      - trixie
     components:
       - stable
     architectures:
@@ -36,6 +36,7 @@
 
 
 - name: Add user to docker group
+  become: true
   user:
     name: "{{ user }}"
     groups: docker

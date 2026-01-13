@@ -34,3 +34,8 @@
 - name: Install Hashicorp keys
   import_tasks: hashicorp_gpg.yml
   when: ansible_distribution == "Debian"
+
+
+- name: Install Docker keys
+  import_tasks: docker_gpg.yml
+  when: ansible_distribution == "Debian"
