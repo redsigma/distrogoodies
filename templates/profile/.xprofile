@@ -1,0 +1,9 @@
+# disable X bell
+xset -b off
+
+# disable screen blanking
+xset s off
+xset s noblank
+
+# disable DPMS
+xset -dpms
