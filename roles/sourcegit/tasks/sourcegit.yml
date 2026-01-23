@@ -16,11 +16,7 @@
         dest: /opt/sourcegit/sourcegit.AppImage
         mode: '0755'
 
-#
-#  @note:
-#   - in portable mode the settings, database  and notes are relative to the binary location
-#   - need to specify `Path` otherwise it creates portable configs in the wrong place
-#
+
 - name: Update Sourcegit shortcut
   copy:
     dest: "{{ ansible_env.HOME }}/.local/share/applications/sourcegit.desktop"

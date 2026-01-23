@@ -1,8 +1,0 @@
----
-- name: Create Sourcegit configuration directory
-  file:
-    path: /opt/sourcegit/data
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0755"

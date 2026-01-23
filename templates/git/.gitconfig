@@ -18,7 +18,14 @@
     # tool = meld
 
 [mergetool "vscode"]
-    cmd = code --wait --merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
+    cmd = code --new-window --wait --merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
+
+[diff]
+    tool = vscode
+    colorMoved = default
+
+[difftool "vscode"]
+  cmd = code --new-window --wait --diff "$LOCAL" "$REMOTE"
 
 [push]
     default = current
@@ -43,11 +50,9 @@
     light = false   # set to true if you're in a terminal w/ a light bgcolor (e.g. macOS terminal)
     side-by-side = true
 
-[diff]
-    colorMoved = default
 
 [pull]
-	rebase = true
+    rebase = true
 
 
 #
