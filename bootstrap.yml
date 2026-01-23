@@ -59,6 +59,12 @@
     # @optional apps
     #
 
+    - name: Install Sourcegit
+      tags: sourcegit
+      import_role:
+        name: sourcegit
+
+
     - name: Install OBS
       tags: obs
       import_role:
