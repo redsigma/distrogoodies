@@ -103,6 +103,12 @@
       import_role:
         name: qownnotes
 
+    - name: Install Rider
+      tags: rider
+      import_role:
+        name: rider
+
+
     #
     # @optional scripts
     #

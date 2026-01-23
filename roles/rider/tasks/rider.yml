@@ -1,0 +1,60 @@
+---
+- name: Check Rider is installed
+  stat:
+    path: /opt/rider
+  register: rider_install_dir
+
+
+- block:
+    - name: Ensure Rider directory exists
+      become: true
+      file:
+        path: /opt/rider
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+
+
+    - name: Download Rider
+      get_url:
+        url: "https://download.jetbrains.com/rider/JetBrains.Rider-2024.3.9.tar.gz"
+        dest: "/opt/rider/rider.tar.gz"
+        mode: "0644"
+
+
+    - name: Extract Rider into /opt
+      become: true
+      unarchive:
+        src: /opt/rider/rider.tar.gz
+        dest: /opt/rider
+        remote_src: true
+        extra_opts:
+          - --strip-components=1
+
+
+    - name: Cleanup leftovers
+      file:
+        path: "/opt/rider/rider.tar.gz"
+        state: absent
+
+  when: not rider_install_dir.stat.exists
+
+
+- name: Update QOwnNotes shortcut
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/jetbrains-rider.desktop"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+    content: |
+      [Desktop Entry]
+      Version=1.0
+      Type=Application
+      Name=JetBrains Rider
+      Icon=/opt/rider/bin/rider.svg
+      Exec="/opt/rider/bin/rider" %f
+      Comment=A cross-platform IDE for .NET
+      Categories=Development;IDE;
+      Terminal=false
+      StartupWMClass=jetbrains-rider
+      StartupNotify=true

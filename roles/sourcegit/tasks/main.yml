@@ -2,7 +2,3 @@
 - name: Install SourceGit
   import_tasks: sourcegit.yml
   when: ansible_distribution == "Debian"
-
-- name: Configure Sourcegit
-  import_tasks: configure.yml
-  when: ansible_distribution == "Debian"

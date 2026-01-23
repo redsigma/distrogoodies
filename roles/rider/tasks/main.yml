@@ -1,0 +1,5 @@
+---
+- name: Install Rider
+  import_tasks: rider.yml
+  when: ansible_distribution == "Debian"
+
