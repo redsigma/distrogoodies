@@ -9,24 +9,6 @@
 [commit]
   verbose = true
 
-[mergetool]
-	tool = vscode
-	keepbackup = false
-
-[merge]
-    tool = vscode
-    # tool = meld
-
-[mergetool "vscode"]
-    cmd = code --new-window --wait --merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
-
-[diff]
-    tool = vscode
-    colorMoved = default
-
-[difftool "vscode"]
-  cmd = code --new-window --wait --diff "$LOCAL" "$REMOTE"
-
 [push]
     default = current
 
@@ -56,25 +38,53 @@
 
 
 #
-# Tools setup
+# Diff Tool setup
 #
 
-[difftool "sourcetree"]
-	cmd = "'' "
-	keepBackup = false
-  	keepTemporaries = false
-	trustExitCode = true
+[diff]
+    tool = vscode
+    colorMoved = default
 
-[mergetool "sourcetree"]
-	cmd = "'' "
-	trustExitCode = true
-	keepBackup = false
+[difftool "vscode"]
+    cmd = code --new-window --wait --diff "$LOCAL" "$REMOTE"
+
+[difftool "rider"]
+    cmd = "/opt/rider/bin/rider" diff "$LOCAL" "$REMOTE"
+
+[difftool "sourcetree"]
+    cmd = "'' "
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = true
+
+#
+# Merge Tool setup
+#
+
+[merge]
+    tool = vscode
+    # tool = meld
+
+[mergetool]
+    tool = vscode
+    keepbackup = false
 
 [mergetool "vscode"]
-	cmd = "f(){ dir="$(dirname "/c/apps/dev/code/Code.exe")" && \"$dir\\Code.exe\" --new-window --wait --merge \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\" --extensions-dir \"$dir\\profiles_data\\mergetool\\exts\"  --user-data-dir \"$dir\\profiles_data\\mergetool\\data\" ;}; f"
-	keepBackup = false
-  	keepTemporaries = false
-	trustExitCode = true
+    cmd = code --new-window --wait --merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = true
+
+[mergetool "rider"]
+    cmd = "/opt/rider/bin/rider" merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = true
+
+[mergetool "sourcetree"]
+    cmd = "'' "
+    trustExitCode = true
+    keepBackup = false
 
 
 #####################################################################
@@ -82,9 +92,9 @@
 #   - also checks if current dir or subdir is part of a git repo
 #
 [alias]
-	opensourcetree = "!f() { dir="%cd%"; start \"\" \"%localappdata%\\SourceTree\\SourceTree.exe\" -f \"$dir\"; }; f" # windows style path, C:\path
-	# opensourcetree = !"f(){ dir="$(pwd)" && start \"\" \"%localappdata%\\SourceTree\\SourceTree.exe\"  -f \"$dir\" ;}; f" # unix style path, /c/path
-	st = !"f(){ branch_name="$(git branch --show-current)" && return_code="$?" && [ \"$return_code\" != 128 ] && echo Opening SourceTree \"$branch_name\" && git opensourcetree; }; f"
+    opensourcetree = "!f() { dir="%cd%"; start \"\" \"%localappdata%\\SourceTree\\SourceTree.exe\" -f \"$dir\"; }; f" # windows style path, C:\path
+    # opensourcetree = !"f(){ dir="$(pwd)" && start \"\" \"%localappdata%\\SourceTree\\SourceTree.exe\"  -f \"$dir\" ;}; f" # unix style path, /c/path
+    st = !"f(){ branch_name="$(git branch --show-current)" && return_code="$?" && [ \"$return_code\" != 128 ] && echo Opening SourceTree \"$branch_name\" && git opensourcetree; }; f"
 
 [alias]
     co = checkout
