@@ -1,0 +1,27 @@
+---
+- name: Ensure SourceGit directory exist
+  file:
+    path: "{{ ansible_env.HOME }}/.config/SourceGit/"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+
+
+- name: Gather templated files
+  find:
+    paths: "{{ role_path }}/templates"
+    file_type: file
+    recurse: true
+  register: sourcegit_templates
+
+
+- name: Updating config files
+  template:
+    src: "{{ item.path }}"
+    dest: >-
+      {{ ansible_env.HOME }}/.config/SourceGit/{{ item.path | basename }}
+    mode: "0644"
+    force: false
+  loop: "{{ sourcegit_templates.files }}"
+
