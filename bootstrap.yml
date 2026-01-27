@@ -103,6 +103,11 @@
       import_role:
         name: qownnotes
 
+    - name: Install KeePassXC
+      tags: keepass
+      import_role:
+        name: keepass
+
     # - name: Install Rider
     #   tags: rider
     #   import_role:
