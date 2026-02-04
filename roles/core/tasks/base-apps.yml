@@ -7,6 +7,7 @@
       - fzf       # fuzzy finder
       - jq        # needed for various scripts
       - xclip
+      - gpg
       - tmux
       - git
       - gitk
