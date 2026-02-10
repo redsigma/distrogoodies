@@ -68,6 +68,8 @@
 [mergetool]
     tool = vscode
     keepbackup = false
+    writeToTemp = true
+
 
 [mergetool "vscode"]
     cmd = code --new-window --wait --merge "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
