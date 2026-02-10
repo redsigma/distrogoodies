@@ -8,6 +8,7 @@ Usage:
 
 Examples:
   oc owner -n myns mypod
+  oc owner -n myns
 USAGE
   exit 1
 }
@@ -54,12 +55,21 @@ done
 if [[ -z "$namespace" ]]; then
   namespace=$(oc config view --minify -o jsonpath='{.contexts[0].context.namespace}' 2>/dev/null || true)
 fi
-[[ -n "$namespace" && -n "$pod" ]] || usage
+[[ -n "$namespace" ]] || usage
 
+if [[ -n "$pod" ]]; then
+  pod_owner="$(oc -n "$namespace" get pod "$pod" -o jsonpath='{range .metadata.ownerReferences[*]}{.kind}/{.name}{"\n"}{end}')"
+  printf '\n%s\n\n' "$pod_owner"
+else
+  pods=$(oc -n "$namespace" get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
 
-pod_owner="$(oc -n "$namespace" get pod "$pod" -o jsonpath='{range .metadata.ownerReferences[*]}{.kind}/{.name}{"\n"}{end}')"
+  for pod_name in $pods; do
+    pod_owner="$(oc -n "$namespace" get pod "$pod_name" -o jsonpath='{range .metadata.ownerReferences[*]}{.kind}/{.name}{"\n"}{end}')"
 
-#
-# Log printing
-#
-printf $pod_owner
+    if [[ -n "$pod_owner" ]]; then
+      printf '%s -> %s\n\n' "$pod_name" "$pod_owner"
+    else
+      printf '%s -> None\n\n' "$pod_name"
+    fi
+  done
+fi
