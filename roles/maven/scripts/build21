@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+export JAVA_HOME=/opt/java/jdks/jdk_21
+export MAVEN_OPTS="-Dfile.encoding=UTF8 -Xmx4g -XX:MaxMetaspaceSize=512m"
+export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
+
+exec mvn -s "$HOME/.config/maven/maven-settings.xml" "$@"
+

@@ -88,15 +88,20 @@
         name: secret-manager
 
 
-    - name: Install Postman
-      tags: postman
+    - name: Install Maven
+      tags: maven
       import_role:
-        name: postman
+        name: maven
 
-    - name: Install Bruno
-      tags: bruno
-      import_role:
-        name: bruno
+    # - name: Install Postman
+    #   tags: postman
+    #   import_role:
+    #     name: postman
+
+    # - name: Install Bruno
+    #   tags: bruno
+    #   import_role:
+    #     name: bruno
 
     - name: Install QOwnNotes
       tags: qownnotes

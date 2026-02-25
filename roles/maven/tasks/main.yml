@@ -1,0 +1,9 @@
+---
+- name: Install Maven
+  import_tasks: maven.yml
+  when: ansible_distribution == "Debian"
+
+- name: Configure maven
+  import_tasks: configure.yml
+  when: ansible_distribution == "Debian"
+
