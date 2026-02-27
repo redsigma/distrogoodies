@@ -1,0 +1,4 @@
+---
+- name: Install ReinPlayer
+  import_tasks: video_player.yml
+  when: ansible_distribution == "Debian"

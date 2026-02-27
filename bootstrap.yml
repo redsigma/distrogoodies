@@ -118,6 +118,10 @@
     #   import_role:
     #     name: rider
 
+    - name: Install Video Player
+      tags: video_player
+      import_role:
+        name: video_player
 
     #
     # @optional scripts
