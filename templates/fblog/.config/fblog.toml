@@ -4,7 +4,7 @@ main_line_format = "{{bold(fixed_size 19 fblog_timestamp)}} {{level_style (upper
 message_keys = ["short_message", "msg", "message"]
 time_keys = ["timestamp", "time", "@timestamp", "ts"]
 dump_all_exclude = []
-always_print_fields = ["record", "stacktrace", "stackTrace", "error"]
+always_print_fields = ["record", "stacktrace", "stackTrace", "error", "exception"]
 level_keys = ["record > error_severity", "level", "severity", "log.level", "loglevel"]
 additional_value_format = "{{bold (color_rgb 150 150 150 (min_size 25 key))}}: {{value}}"
 
