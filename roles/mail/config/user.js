@@ -1,0 +1,13 @@
+user_pref("app.use_without_mail_account", true);
+user_pref("mailnews.start_page.enabled", false);
+user_pref("datareporting.healthreport.uploadEnabled", false);
+user_pref("extensions.pendingOperations", false);
+user_pref("messenger.status.awayWhenIdle", false);
+user_pref("messenger.status.reportIdle", false);
+user_pref("mail.shell.checkDefaultClient", false);
+user_pref("mail.spam.manualMark", true);
+user_pref("mail.spam.markAsReadOnSpam", true);
+user_pref("network.cookie.cookieBehavior", 3);
+user_pref("offline.startup_state", 4);
+user_pref("pref.privacy.disable_button.cookie_exceptions", false);
+user_pref("pref.privacy.disable_button.view_cookies", false);

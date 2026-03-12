@@ -1,0 +1,9 @@
+---
+- name: Install Thunderbird
+  import_tasks: thunderbird.yml
+  when: ansible_distribution == "Debian"
+
+- name: Configure Thunderbird
+  import_tasks: configure.yml
+  when: ansible_distribution == "Debian"
+

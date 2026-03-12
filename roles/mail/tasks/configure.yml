@@ -1,0 +1,19 @@
+---
+- name: Update config files
+  become: true
+  block:
+    - name: Create config directory
+      file:
+        path: /opt/thunderbird/profile/
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0755"
+
+    - name: Copy config files
+      copy:
+        src: config/
+        dest: /opt/thunderbird/profile/
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: "0600"

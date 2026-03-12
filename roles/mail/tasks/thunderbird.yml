@@ -1,0 +1,78 @@
+---
+- name: Check thunderbird
+  stat:
+    path: /opt/thunderbird
+  register: directory_thunderbird
+
+
+- name: Install thunderbird
+  block:
+    - name: Ensure thunderbird directory
+      become: true
+      file:
+        path: /opt/thunderbird
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+
+
+    - name: Download thunderbird
+      get_url:
+        url: "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/148.0.1/linux-x86_64/en-US/thunderbird-148.0.1.tar.xz"
+        dest: "/tmp/thunderbird.tar.xz"
+        mode: "0644"
+      when: not directory_thunderbird.stat.exists
+
+
+    - name: Extract thunderbird
+      unarchive:
+        src: "/tmp/thunderbird.tar.xz"
+        dest: "/opt/thunderbird"
+        extra_opts:
+          - "--strip-components=1"
+        remote_src: true
+
+
+    - name: Cleanup leftovers
+      file:
+        path: "/tmp/thunderbird.tar.xz"
+        state: absent
+
+
+    - name: Ensure thunderbird profile
+      ansible.builtin.file:
+        path: "/opt/thunderbird/profile"
+        state: directory
+        mode: "0755"
+
+  when: not directory_thunderbird.stat.exists
+
+
+- name: Update Thunderbird shortcut
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/thunderbird.desktop"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+    content: |
+      [Desktop Entry]
+      Name=Thunderbird
+      Comment=Send and receive mail with Thunderbird
+      GenericName=Mail Client
+      Exec=/opt/thunderbird/thunderbird -profile /opt/thunderbird/profile %u
+      Icon=/opt/thunderbird/chrome/icons/default/default256.png
+      Terminal=false
+      Type=Application
+      Categories=Network;Email;
+      MimeType=message/rfc822;x-scheme-handler/mailto;text/calendar;text/vcard;text/x-vcard;x-scheme-handler/webcal;x-scheme-handler/webcals;x-scheme-handler/mid;
+      StartupNotify=true
+      StartupWMClass=thunderbird
+      Actions=ComposeMessage;OpenAddressBook;
+
+      [Desktop Action ComposeMessage]
+      Name=Write New Message
+      Exec=thunderbird -compose
+
+      [Desktop Action OpenAddressBook]
+      Name=Open the Address Book
+      Exec=thunderbird -addressbook

@@ -71,6 +71,12 @@
         name: obs
 
 
+    - name: Install Mail Client
+      tags: mail
+      import_role:
+        name: mail
+
+
     - name: Install Azure VPN Client
       tags: azure_vpn
       import_role:
