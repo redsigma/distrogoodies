@@ -1,0 +1,53 @@
+---
+- name: Remove conflicting packages
+  become: true
+  apt:
+    pkg:
+      - light-locker
+    state: absent
+    purge: yes
+
+
+# the xfce4 lockscreen is more stable for now
+- name: Install packages
+  become: true
+  apt:
+    pkg:
+      - xfce4-screensaver
+      - nvidia-suspend-common # required for proper suspend scripts
+    state: present
+    update_cache: true
+
+
+- name: Copy nvidia modprobe files
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/modprobe.d/"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  with_fileglob:
+    - "{{ role_path }}/config/modprobe.d/*.conf"
+  register: modprobe_status
+
+
+- name: Update initramfs
+  become: true
+  command: update-initramfs -u
+  when: modprobe_status.changed
+  changed_when: false
+
+#
+# workaround until i find a way to fix resume stage after suspend was done
+#
+- name: Disable suspend on idle
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/logind.conf.d/"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  with_fileglob:
+    - "{{ role_path }}/config/logind.d/*.conf"

@@ -1,0 +1,5 @@
+---
+- name: Install lockscreen
+  import_tasks: suspend.yml
+  when: ansible_distribution == "Debian"
+
