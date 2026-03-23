@@ -1,20 +1,27 @@
 ---
-- name: Ensure QOwnNotes directory exists
-  become: true
-  file:
-    path: /opt/qownnotes
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
+- name: Check QownNotes is installed
+  stat:
+    path: /opt/qownnotes/QOwnNotes-x86_64.AppImage
+  register: install_binary
+
+- block:
+    - name: Ensure QOwnNotes directory exists
+      become: true
+      file:
+        path: /opt/qownnotes
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
 
-- name: Install QOwnNotes
-  block:
-    - name: Download QOwnNotes AppImage
-      get_url:
-        url: https://github.com/pbek/QOwnNotes/releases/latest/download/QOwnNotes-x86_64.AppImage
-        dest: /opt/qownnotes/QOwnNotes-x86_64.AppImage
-        mode: '0755'
+    - name: Install QOwnNotes
+      block:
+        - name: Download QOwnNotes AppImage
+          get_url:
+            url: https://github.com/pbek/QOwnNotes/releases/latest/download/QOwnNotes-x86_64.AppImage
+            dest: /opt/qownnotes/QOwnNotes-x86_64.AppImage
+            mode: '0755'
+  when: not install_binary.stat.exists
 
 #
 #  @note:
