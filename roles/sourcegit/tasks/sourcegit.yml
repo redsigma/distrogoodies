@@ -1,20 +1,27 @@
 ---
-- name: Ensure SourceGit directory exists
-  become: true
-  file:
-    path: /opt/sourcegit
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
+- name: Check sourcegit
+  stat:
+    path: /opt/sourcegit/sourcegit.AppImage
+  register: install_binary
 
 
-- name: Install SourceGit
+- name: Install sourcegit
   block:
-    - name: Download SourceGit AppImage
+    - name: Ensure sourcegit directory
+      become: true
+      file:
+        path: /opt/sourcegit
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+
+    - name: Download sourcegit
       get_url:
         url: https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.04/sourcegit-2026.04.linux.amd64.AppImage
         dest: /opt/sourcegit/sourcegit.AppImage
         mode: '0755'
+
+  when: not install_binary.stat.exists
 
 
 - name: Update Sourcegit shortcut
