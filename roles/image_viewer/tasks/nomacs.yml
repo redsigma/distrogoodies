@@ -23,6 +23,28 @@
     
   when: not install_binary.stat.exists
 
+- name: Prepare available MIME types
+  set_fact:
+    image_mime_types:
+      - image/avif
+      - image/bmp
+      - image/gif
+      - image/heic
+      - image/heif
+      - image/jpeg
+      - image/jxl
+      - image/png
+      - image/tiff
+      - image/webp
+      - image/x-eps
+      - image/x-ico
+      - image/x-portable-bitmap
+      - image/x-portable-graymap
+      - image/x-portable-pixmap
+      - image/x-xbitmap
+      - image/x-xpixmap
+
+
 - name: Update nomacs shortcut
   copy:
     dest: "{{ ansible_env.HOME }}/.local/share/applications/nomacs.desktop"
@@ -39,13 +61,12 @@
       Icon=org.nomacs.ImageLounge
       Type=Application
       Categories=Graphics;RasterGraphics;Viewer;2DGraphics;
-      MimeType=image/avif;image/bmp;image/gif;image/heic;image/heif;image/jpeg;image/jxl;image/png;image/tiff;image/webp;image/x-eps;image/x-ico;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-xbitmap;image/x-xpixmap;
+      MimeType={{ image_mime_types | join(';') }};
+  notify: Update desktop database
 
-
-
-
-
-
+- name: Set as default image viewer
+  ansible.builtin.command:
+    cmd: "xdg-mime default nomacs.desktop {{ image_mime_types | join(' ') }}"
 
 
 

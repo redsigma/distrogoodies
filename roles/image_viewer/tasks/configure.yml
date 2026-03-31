@@ -11,7 +11,6 @@
   template:
     src: "{{ role_path }}/config/settings.ini"
     dest: >-
-      /opt/nomacs/settings.ini
-    mode: "0644"
+      {{ ansible_env.HOME }}/.config/nomacs/Image Lounge.conf
+    mode: "0664"
     force: false
-

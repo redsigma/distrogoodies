@@ -71,6 +71,11 @@
         name: sourcegit
 
 
+    - name: Install Nomacs
+      tags: image_viewer
+      import_role:
+        name: image_viewer
+
     - name: Install OBS
       tags: obs
       import_role:
