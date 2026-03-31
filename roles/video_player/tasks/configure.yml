@@ -1,0 +1,16 @@
+---
+- name: Ensure smplayer directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/smplayer"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+
+- name: Updating config files
+  template:
+    src: "{{ role_path }}/config/smplayer.ini"
+    dest: >-
+      {{ ansible_env.HOME }}/.config/smplayer/smplayer.ini
+    mode: "0664"
+    force: false

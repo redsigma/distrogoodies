@@ -1,4 +1,8 @@
 ---
-- name: Install ReinPlayer
-  import_tasks: video_player.yml
+- name: Install SMPlayer
+  import_tasks: smplayer.yml
+  when: ansible_distribution == "Debian"
+
+- name: Configure SMPlayer
+  import_tasks: configure.yml
   when: ansible_distribution == "Debian"
