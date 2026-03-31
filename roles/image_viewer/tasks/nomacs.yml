@@ -1,0 +1,166 @@
+---
+- name: Check nomacs
+  stat:
+    path: /opt/nomacs/nomacs-x86_64.AppImage
+  register: install_binary
+
+
+- name: Install nomacs
+  block:
+    - name: Ensure nomacs directory
+      become: true
+      file:
+        path: /opt/nomacs
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+
+    - name: Install Nomacs
+      unarchive:
+        src: https://github.com/nomacs/nomacs/releases/download/3.22.0/nomacs-3.22.0-linux-24.04-x86_64-AppImage.zip
+        dest: "/opt/nomacs"
+        remote_src: true
+    
+  when: not install_binary.stat.exists
+
+- name: Update nomacs shortcut
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/nomacs.desktop"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+    content: |
+      [Desktop Entry]
+      Name=nomacs
+      GenericName=Image Viewer
+      Comment=nomacs is a free, open source image viewer.
+      Exec=/opt/nomacs/nomacs-x86_64.AppImage %f
+      Terminal=false
+      Icon=org.nomacs.ImageLounge
+      Type=Application
+      Categories=Graphics;RasterGraphics;Viewer;2DGraphics;
+      MimeType=image/avif;image/bmp;image/gif;image/heic;image/heif;image/jpeg;image/jxl;image/png;image/tiff;image/webp;image/x-eps;image/x-ico;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-xbitmap;image/x-xpixmap;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- name: Install Nomacs
+  become: yes
+  apt:
+    name: flatpak
+    state: present
+    update_cache: yes
+
+
+- name: Check Haruna (Flatpak) is installed
+  command: flatpak --user info --show-commit org.kde.haruna
+  register: has_obs_flatpak
+  changed_when: false
+  failed_when: false
+
+
+- name: Add flathub remote to Flatpak
+  command:
+    cmd: flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  register: flatpak_remote_add
+  changed_when: "'configured' in flatpak_remote_add.stdout or flatpak_remote_add.rc == 0"
+  when: has_obs_flatpak.rc != 0
+
+
+- name: Install OBS Studio (Flatpak)
+  command: >
+    flatpak --user install -y flathub com.obsproject.Studio
+  environment:
+    FLATPAK_NONINTERACTIVE: "1"
+  register: flatpak_obs_install
+  changed_when: "'installed' in flatpak_obs_install.stdout
+                 or 'upgraded' in flatpak_obs_install.stdout
+                 or flatpak_obs_install.rc == 0"
+  when: has_obs_flatpak.rc != 0
+
+
+- name: Revert OBS Studio to 31.1.2 (Flatpak)
+  command: >
+    flatpak --user update -y --commit=4249e4245f75bbec5ad89a4bcfb2726ecbe54c7f3a642e6dbe2820ff4ac2dbc9 com.obsproject.Studio
+  environment:
+    FLATPAK_NONINTERACTIVE: "1"
+  register: flatpak_obs_install
+  changed_when: "'installed' in flatpak_obs_install.stdout
+                 or 'upgraded' in flatpak_obs_install.stdout
+                 or flatpak_obs_install.rc == 0"
+  when: has_obs_flatpak.rc != 0 
+
+
+- name: Disable updates to OBS Studio (Flatpak)
+  command: >
+    flatpak --user mask com.obsproject.Studio
+  environment:
+    FLATPAK_NONINTERACTIVE: "1"
+  register: flatpak_obs_install
+  changed_when: "'installed' in flatpak_obs_install.stdout
+                 or 'upgraded' in flatpak_obs_install.stdout
+                 or flatpak_obs_install.rc == 0"
+  when: has_obs_flatpak.rc != 0
+
+
+- name: Check OBS Studio (Flatpak) shortcut exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/share/flatpak/app/com.obsproject.Studio/current/active/export/share/applications/com.obsproject.Studio.desktop"
+  register: obs_shortcut
+
+
+#
+#  @note: 
+#   - path to files is in ~/.local/share/flatpak/app/com.obsproject.Studio/current/active/files/
+#   - you have to use propietary nvidia for obs. Nouveau or NVK seem to crash X11
+#      - use below commands in order
+#
+#   sudo sed -i 's/main/main non-free contrib/g' /etc/apt/sources.list
+#   sudo apt install linux-image-amd64 linux-headers-amd64   ## required else `sudo dkms status` wont show `installed`
+#   sudo apt install nvidia-driver
+#
+#
+- name: Update Nomacs shortcut
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/flatpak/app/com.obsproject.Studio/current/active/export/share/applications/com.obsproject.Studio.desktop"
+    mode: "0600"
+    content: |
+      [Desktop Entry]
+      Name=nomacs
+      GenericName=Image Viewer
+      Comment=nomacs is a free, open source image viewer.
+      Exec=nomacs %f
+      Terminal=false
+      Icon=org.nomacs.ImageLounge
+      Type=Application
+      Categories=Graphics;RasterGraphics;Viewer;2DGraphics;
+      MimeType=image/avif;image/bmp;image/gif;image/heic;image/heif;image/jpeg;image/jxl;image/png;image/tiff;image/webp;image/x-eps;image/x-ico;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-xbitmap;image/x-xpixmap;
+
+
+  when: obs_shortcut.stat.exists

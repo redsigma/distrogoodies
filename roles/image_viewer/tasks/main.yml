@@ -1,0 +1,8 @@
+---
+- name: Install Nomacs
+  import_tasks: nomacs.yml
+  when: ansible_distribution == "Debian"
+
+- name: Configure Nomacs
+  import_tasks: configure.yml
+  when: ansible_distribution == "Debian"

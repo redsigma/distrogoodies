@@ -1,0 +1,17 @@
+---
+- name: Ensure Nomacs directory
+  file:
+    path: "/opt/nomacs"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+
+- name: Updating config files
+  template:
+    src: "{{ role_path }}/config/settings.ini"
+    dest: >-
+      /opt/nomacs/settings.ini
+    mode: "0644"
+    force: false
+
