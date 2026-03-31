@@ -7,17 +7,6 @@
     hidden: true
   register: found_files
 
-
-- name: "[TRANSIENT] Apply LF endings"
-  replace:
-    path: "{{ item.path }}"
-    regexp: "\r$"
-    replace: ""
-  loop: "{{ found_files.files | default([]) }}"
-  loop_control:
-    label: "{{ item.path }}"
-
-
 - name: Copy polkit *.rules files
   become: true
   copy:

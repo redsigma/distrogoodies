@@ -21,18 +21,6 @@
     hidden: true
   register: found_files
 
-#
-# @note: make sure our cloned files are in LF endings
-#
-- name: "[TRANSIENT] Apply LF endings"
-  replace:
-    path: "{{ item.path }}"
-    regexp: "\r$"
-    replace: ""
-  loop: "{{ found_files.files | default([]) }}"
-  loop_control:
-    label: "{{ item.path }}"
-
 
 - name: Preparing dotfiles folder under ~/.config 
   set_fact:
