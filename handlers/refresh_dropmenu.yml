@@ -1,0 +1,7 @@
+---
+# Refresh Open With application list
+- name: Update desktop database
+  command:
+    cmd: update-desktop-database {{ ansible_env.HOME }}/.local/share/applications
+  changed_when: false
+  failed_when: false

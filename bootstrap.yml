@@ -10,9 +10,11 @@
 #
 
 - name: Bootstrap local machine environment
+  handlers: 
+    - import_tasks: handlers/refresh_dropmenu.yml
+
   hosts: localhost
   tasks:
-
 
     - name: Install core [apps]
       tags: core
