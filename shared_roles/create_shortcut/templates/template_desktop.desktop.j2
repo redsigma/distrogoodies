@@ -57,8 +57,21 @@ MimeType={{ mime_types | join(';') }};
 Startup Features
 #}
 {% if startup_class %}
-StartupWMClass={{ startup_class }};
+StartupWMClass={{ startup_class }}
 {% endif %}
 {% if startup_notify %}
 StartupNotify={{ startup_notify | ternary('true', 'false') }}
 {% endif %}
+{#
+
+Actions
+#}
+{% if actions | length > 0 %}
+Actions={{ actions | map(attribute='id') | join(';') }};
+{% endif %}
+{% for action in actions %}
+
+[Desktop Action {{ action.id }}]
+Name={{ action.name }}
+Exec={{ action.exec }}
+{% endfor %}

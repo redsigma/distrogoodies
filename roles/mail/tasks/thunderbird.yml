@@ -46,33 +46,3 @@
         mode: "0755"
 
   when: not directory_thunderbird.stat.exists
-
-
-- name: Update Thunderbird shortcut
-  copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/thunderbird.desktop"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-    content: |
-      [Desktop Entry]
-      Name=Thunderbird
-      Comment=Send and receive mail with Thunderbird
-      GenericName=Mail Client
-      Exec=/opt/thunderbird/thunderbird -profile /opt/thunderbird/profile %u
-      Icon=/opt/thunderbird/chrome/icons/default/default256.png
-      Terminal=false
-      Type=Application
-      Categories=Network;Email;
-      MimeType=message/rfc822;x-scheme-handler/mailto;text/calendar;text/vcard;text/x-vcard;x-scheme-handler/webcal;x-scheme-handler/webcals;x-scheme-handler/mid;
-      StartupNotify=true
-      StartupWMClass=thunderbird
-      Actions=ComposeMessage;OpenAddressBook;
-
-      [Desktop Action ComposeMessage]
-      Name=Write New Message
-      Exec=thunderbird -compose
-
-      [Desktop Action OpenAddressBook]
-      Name=Open the Address Book
-      Exec=thunderbird -addressbook

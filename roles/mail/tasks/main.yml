@@ -3,7 +3,42 @@
   import_tasks: thunderbird.yml
   when: ansible_distribution == "Debian"
 
+
 - name: Configure Thunderbird
   import_tasks: configure.yml
   when: ansible_distribution == "Debian"
 
+
+- name: Create Thunderbird shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: thunderbird.desktop
+    appname: Thunderbird
+    generic_name: Mail Client
+    comment: Send and receive mail with Thunderbird
+    icon: /opt/thunderbird/chrome/icons/default/default256.png
+    exec: /opt/thunderbird/thunderbird -profile /opt/thunderbird/profile %u
+    startup_class: thunderbird
+    startup_notify: true
+    set_as_default_app: true
+    categories:
+      - Network
+      - Email
+    mime_types:
+      - message/rfc822
+      - x-scheme-handler/mailto
+      - text/calendar
+      - text/vcard
+      - text/x-vcard
+      - x-scheme-handler/webcal
+      - x-scheme-handler/webcals
+      - x-scheme-handler/mid
+    actions:
+      - id: ComposeMessage
+        name: Write New Message
+        exec: thunderbird -compose
+
+      - id: OpenAddressBook
+        name: Open the Address Book
+        exec: thunderbird -addressbook
