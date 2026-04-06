@@ -24,6 +24,7 @@
     mode: "{{ file_mode }}"
     owner: "{{ file_owner }}"
     group: "{{ file_group }}"
+  notify: Update desktop database
 
 
 - name: Configure default mime handler

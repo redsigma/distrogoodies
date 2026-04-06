@@ -1,42 +1,54 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
+{#
 
-{# Identity #}
+Identity
+#}
 Name={{ appname }}
-{%- if generic_name -%}
+{% if generic_name %}
 GenericName={{ generic_name }}
-{%- endif %}
-{%- if comment -%}
+{% endif %}
+{% if comment %}
 Comment={{ comment }}
-{%- endif %}
+{% endif %}
+{#
 
-{# Execution #}
+Execution
+#}
 Exec={{ exec }}
-{% if path is defined -%}
+{% if path is defined %}
 Path={{ path }}
-{%- endif %}
+{% endif %}
+{#
 
-{# Icon #}
-{%- if icon -%}
+Icon
+#}
+{% if icon %}
 Icon={{ icon }}
-{%- endif -%}
+{% endif %}
+{#
 
-{# Visibility / behavior #}
+Visibility / behavior
+#}
 Terminal={{ terminal | ternary('true', 'false') }}
-{%- if hidden -%}
+{% if hidden %}
 Hidden={{ hidden | ternary('true', 'false') }}
-{%- endif %}
-{%- if nodisplay -%}
+{% endif %}
+{% if nodisplay %}
 NoDisplay={{ nodisplay | ternary('true', 'false') }}
-{%- endif %}
+{% endif %}
+{#
 
-{# Categories #}
-{%- if categories | length > 0 -%}
+Categories
+#}
+{% if categories | length > 0 %}
 Categories={{ categories | join(';') }};
-{%- endif %}
+{% endif %}
+{#
 
-{# Mime types #}
-{%- if mime_types | length > 0 -%}
+Mime types
+#}
+{% if mime_types | length > 0 %}
 MimeType={{ mime_types | join(';') }};
-{%- endif %}
+{% endif %}

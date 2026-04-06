@@ -3,6 +3,43 @@
   import_tasks: nomacs.yml
   when: ansible_distribution == "Debian"
 
+
 - name: Configure Nomacs
   import_tasks: configure.yml
   when: ansible_distribution == "Debian"
+
+
+- name: Create Nomacs shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: nomacs.desktop
+    appname: Nomacs
+    generic_name: Image Viewer
+    comment: nomacs is a free, open source image viewer
+    icon: org.nomacs.ImageLounge
+    exec: "/opt/nomacs/nomacs-x86_64.AppImage %f"
+    set_as_default_app: true
+    categories:
+      - Graphics
+      - RasterGraphics
+      - Viewer
+      - 2DGraphics
+    mime_types:
+      - image/avif
+      - image/bmp
+      - image/gif
+      - image/heic
+      - image/heif
+      - image/jpeg
+      - image/jxl
+      - image/png
+      - image/tiff
+      - image/webp
+      - image/x-eps
+      - image/x-ico
+      - image/x-portable-bitmap
+      - image/x-portable-graymap
+      - image/x-portable-pixmap
+      - image/x-xbitmap
+      - image/x-xpixmap

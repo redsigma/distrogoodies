@@ -20,50 +20,5 @@
         src: https://github.com/nomacs/nomacs/releases/download/3.22.0/nomacs-3.22.0-linux-24.04-x86_64-AppImage.zip
         dest: "/opt/nomacs"
         remote_src: true
-    
+
   when: not install_binary.stat.exists
-
-- name: Prepare available MIME types
-  set_fact:
-    image_mime_types:
-      - image/avif
-      - image/bmp
-      - image/gif
-      - image/heic
-      - image/heif
-      - image/jpeg
-      - image/jxl
-      - image/png
-      - image/tiff
-      - image/webp
-      - image/x-eps
-      - image/x-ico
-      - image/x-portable-bitmap
-      - image/x-portable-graymap
-      - image/x-portable-pixmap
-      - image/x-xbitmap
-      - image/x-xpixmap
-
-
-- name: Update nomacs shortcut
-  copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/nomacs.desktop"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-    content: |
-      [Desktop Entry]
-      Name=nomacs
-      GenericName=Image Viewer
-      Comment=nomacs is a free, open source image viewer.
-      Exec=/opt/nomacs/nomacs-x86_64.AppImage %f
-      Terminal=false
-      Icon=org.nomacs.ImageLounge
-      Type=Application
-      Categories=Graphics;RasterGraphics;Viewer;2DGraphics;
-      MimeType={{ image_mime_types | join(';') }};
-  notify: Update desktop database
-
-- name: Set as default image viewer
-  ansible.builtin.command:
-    cmd: "xdg-mime default nomacs.desktop {{ image_mime_types | join(' ') }}"
