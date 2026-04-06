@@ -62,6 +62,9 @@ StartupWMClass={{ startup_class }}
 {% if startup_notify %}
 StartupNotify={{ startup_notify | ternary('true', 'false') }}
 {% endif %}
+{% if keywords | length > 0 %}
+Keywords={{ keywords | join(';') }};
+{% endif %}
 {#
 
 Actions

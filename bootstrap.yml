@@ -10,7 +10,7 @@
 #
 
 - name: Bootstrap local machine environment
-  handlers: 
+  handlers:
     - import_tasks: handlers/refresh_dropmenu.yml
 
   hosts: localhost
@@ -62,6 +62,12 @@
       tags: nvim
       import_role:
         name: nvim
+
+
+    - name: Install Deskflow
+      tags: deskflow
+      import_role:
+        name: deskflow
 
     #
     # @optional apps

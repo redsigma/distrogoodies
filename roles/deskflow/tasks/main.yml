@@ -1,0 +1,17 @@
+---
+- name: Install Deskflow
+  import_tasks: deskflow.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Add Deskflow to startup
+  include_role:
+    name: run_on_startup
+  vars:
+    filename: deskflow.desktop
+    appname: Deskflow
+    comment: Mouse and keyboard sharing utility
+    exec: deskflow
+    icon: org.deskflow.deskflow
+    categories:
+      - Utility

@@ -1,0 +1,14 @@
+---
+- name: Check Deskflow is installed
+  stat:
+    path: /usr/bin/deskflow
+  register: install_binary
+
+- block:
+    - name: Install deskflow
+      become: true
+      apt:
+        deb: https://github.com/deskflow/deskflow/releases/download/continuous/deskflow-continuous-debian-trixie-x86_64.deb
+        state: present
+
+  when: not install_binary.stat.exists
