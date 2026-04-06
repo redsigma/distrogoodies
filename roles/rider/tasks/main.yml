@@ -3,3 +3,18 @@
   import_tasks: rider.yml
   when: ansible_distribution == "Debian"
 
+
+- name: Create Rider shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: jetbrains-rider.desktop
+    appname: JetBrains Rider
+    comment: A cross-platform IDE for .NET
+    icon: /opt/rider/bin/rider.svg
+    exec: /opt/rider/bin/rider %f
+    startup_class: jetbrains-rider
+    startup_notify: true
+    categories:
+      - Development
+      - IDE

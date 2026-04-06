@@ -52,3 +52,13 @@ Mime types
 {% if mime_types | length > 0 %}
 MimeType={{ mime_types | join(';') }};
 {% endif %}
+{#
+
+Startup Features
+#}
+{% if startup_class %}
+StartupWMClass={{ startup_class }};
+{% endif %}
+{% if startup_notify %}
+StartupNotify={{ startup_notify | ternary('true', 'false') }}
+{% endif %}

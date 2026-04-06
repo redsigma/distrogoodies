@@ -38,23 +38,3 @@
         state: absent
 
   when: not rider_install_dir.stat.exists
-
-
-- name: Update QOwnNotes shortcut
-  copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/jetbrains-rider.desktop"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-    content: |
-      [Desktop Entry]
-      Version=1.0
-      Type=Application
-      Name=JetBrains Rider
-      Icon=/opt/rider/bin/rider.svg
-      Exec="/opt/rider/bin/rider" %f
-      Comment=A cross-platform IDE for .NET
-      Categories=Development;IDE;
-      Terminal=false
-      StartupWMClass=jetbrains-rider
-      StartupNotify=true
