@@ -1,0 +1,42 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+
+{# Identity #}
+Name={{ appname }}
+{%- if generic_name -%}
+GenericName={{ generic_name }}
+{%- endif %}
+{%- if comment -%}
+Comment={{ comment }}
+{%- endif %}
+
+{# Execution #}
+Exec={{ exec }}
+{% if path is defined -%}
+Path={{ path }}
+{%- endif %}
+
+{# Icon #}
+{%- if icon -%}
+Icon={{ icon }}
+{%- endif -%}
+
+{# Visibility / behavior #}
+Terminal={{ terminal | ternary('true', 'false') }}
+{%- if hidden -%}
+Hidden={{ hidden | ternary('true', 'false') }}
+{%- endif %}
+{%- if nodisplay -%}
+NoDisplay={{ nodisplay | ternary('true', 'false') }}
+{%- endif %}
+
+{# Categories #}
+{%- if categories | length > 0 -%}
+Categories={{ categories | join(';') }};
+{%- endif %}
+
+{# Mime types #}
+{%- if mime_types | length > 0 -%}
+MimeType={{ mime_types | join(';') }};
+{%- endif %}

@@ -3,6 +3,36 @@
   import_tasks: qownnotes.yml
   when: ansible_distribution == "Debian"
 
+
 - name: Configure QOwnNotes
   import_tasks: configure.yml
   when: ansible_distribution == "Debian"
+
+
+#
+#  @note:
+#   - in portable mode the settings, database  and notes are relative to the binary location
+#   - need to specify `Path` otherwise it creates portable configs in the wrong place
+#
+- name: Create QOwnNotes shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: qownnotes.desktop
+    appname: QOwnNotes
+    exec: "/opt/qownnotes/QOwnNotes-x86_64.AppImage --portable"
+    path: "/opt/qownnotes"
+    categories:
+      - Notes
+
+
+- name: Add QOwnNotes to startup
+  include_role:
+    name: run_on_startup
+  vars:
+    filename: qownnotes.desktop
+    appname: QOwnNotes
+    exec: "/opt/qownnotes/QOwnNotes-x86_64.AppImage --portable"
+    path: "/opt/qownnotes"
+    categories:
+      - Notes

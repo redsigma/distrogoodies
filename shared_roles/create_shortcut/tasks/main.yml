@@ -1,0 +1,33 @@
+---
+- name: Validate variables
+  assert:
+    that:
+      - filename is defined
+      - filename | length > 0
+      - exec is defined
+      - exec | length > 0
+    fail_msg: "Mandatory parameters not defined"
+    quiet: true
+
+
+- name: Ensure shortcuts directory
+  file:
+    path: "{{ ansible_env.HOME }}/.local/share/applications/"
+    state: directory
+    mode: "0755"
+
+
+- name: Create {{ filename }} shortcut entry
+  template:
+    src: template_desktop.desktop.j2
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/{{ filename }}"
+    mode: "{{ file_mode }}"
+    owner: "{{ file_owner }}"
+    group: "{{ file_group }}"
+
+
+- name: Configure default mime handler
+  include_tasks: set_default_mime.yml
+  when:
+    - set_as_default_app | bool
+    - mime_types | length > 0

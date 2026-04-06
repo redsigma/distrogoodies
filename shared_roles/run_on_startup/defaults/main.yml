@@ -1,0 +1,14 @@
+enabled: true
+terminal: false
+hidden: false
+nodisplay: false
+categories: []
+mime_types: []
+
+generic_name: ""
+icon: ""
+comment: ""
+
+file_mode: "0600"
+file_owner: "{{ ansible_user_id }}"
+file_group: "{{ ansible_user_gid | default(ansible_user_id) }}"

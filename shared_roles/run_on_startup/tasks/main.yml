@@ -1,0 +1,26 @@
+---
+- name: Validate variables
+  assert:
+    that:
+      - filename is defined
+      - filename | length > 0
+      - exec is defined
+      - exec | length > 0
+    fail_msg: "Mandatory parameters not defined"
+    quiet: true
+
+
+- name: Ensure autostart directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/autostart"
+    state: directory
+    mode: "0755"
+
+
+- name: Create {{ filename }} autostart entry
+  template:
+    src: template_desktop.desktop.j2
+    dest: "{{ ansible_env.HOME }}/.config/autostart/{{ filename }}"
+    mode: "{{ file_mode }}"
+    owner: "{{ file_owner }}"
+    group: "{{ file_group }}"

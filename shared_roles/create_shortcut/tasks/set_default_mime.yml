@@ -1,0 +1,7 @@
+---
+- name: Set {{ filename }} as default application for mime types
+  command:
+    cmd: "xdg-mime default {{ filename }} {{ mime_types | join(' ') }}"
+  when:
+    - set_as_default_app | bool
+    - mime_types | length > 0
