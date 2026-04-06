@@ -20,8 +20,10 @@
   vars:
     filename: qownnotes.desktop
     appname: QOwnNotes
-    exec: "/opt/qownnotes/QOwnNotes-x86_64.AppImage --portable"
-    path: "/opt/qownnotes"
+    exec: /opt/qownnotes/QOwnNotes-x86_64.AppImage --portable
+    path: /opt/qownnotes
+    startup_class: QOwnNotes
+    startup_notify: true
     categories:
       - Notes
 
@@ -32,7 +34,9 @@
   vars:
     filename: qownnotes.desktop
     appname: QOwnNotes
-    exec: "/opt/qownnotes/QOwnNotes-x86_64.AppImage --portable"
-    path: "/opt/qownnotes"
+    exec: /opt/qownnotes/QOwnNotes-x86_64.AppImage --portable
+    path: /opt/qownnotes
+    startup_class: QOwnNotes
+    startup_notify: true
     categories:
       - Notes

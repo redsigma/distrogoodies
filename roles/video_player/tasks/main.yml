@@ -18,7 +18,7 @@
     generic_name: Media Player
     comment: A great MPlayer front-end
     icon: smplayer
-    exec: "/opt/smplayer/smplayer.AppImage -pos 40 80 -size 1024 768 %U"
+    exec: /opt/smplayer/smplayer.AppImage -pos 40 80 -size 1024 768 %U
     set_as_default_app: true
     categories:
       - Qt

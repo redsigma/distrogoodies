@@ -18,7 +18,7 @@
     generic_name: Image Viewer
     comment: nomacs is a free, open source image viewer
     icon: org.nomacs.ImageLounge
-    exec: "/opt/nomacs/nomacs-x86_64.AppImage %f"
+    exec: /opt/nomacs/nomacs-x86_64.AppImage %f
     set_as_default_app: true
     categories:
       - Graphics
