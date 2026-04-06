@@ -1,5 +1,5 @@
 ---
-- name: Check nomacs
+- name: Check smplayer
   stat:
     path: /opt/smplayer/smplayer.AppImage
   register: install_binary
@@ -22,66 +22,3 @@
         mode: '0755'
 
   when: not install_binary.stat.exists
-
-
-- name: Prepare available MIME types
-  set_fact:
-    media_mime_types:
-      - audio/ac3
-      - audio/mp4
-      - audio/mpeg
-      - audio/vnd.rn-realaudio
-      - audio/vorbis
-      - audio/x-adpcm
-      - audio/x-matroska
-      - audio/x-mp2
-      - audio/x-mp3
-      - audio/x-ms-wma
-      - audio/x-vorbis
-      - audio/x-wav
-      - audio/mpegurl
-      - audio/x-mpegurl
-      - audio/x-pn-realaudio
-      - audio/x-scpls
-      - audio/aac
-      - audio/flac
-      - audio/ogg
-      - video/avi
-      - video/mp4
-      - video/flv
-      - video/mpeg
-      - video/quicktime
-      - video/vnd.rn-realvideo
-      - video/x-matroska
-      - video/x-ms-asf
-      - video/x-msvideo
-      - video/x-ms-wmv
-      - video/x-ogm+ogg
-      - video/x-theora
-      - video/webm
-
-
-- name: Update smplayer shortcut
-  copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/smplayer.desktop"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-    content: |
-      [Desktop Entry]
-      Categories=Qt;AudioVideo;Player;Video;
-      Comment=A great MPlayer front-end
-      Exec=/opt/smplayer/smplayer.AppImage -pos 40 80 -size 1024 768 %U
-      GenericName=Media Player
-      Icon=smplayer
-      Name=SMPlayer
-      Type=Application
-      X-KDE-StartupNotify=false
-      X-AppImage-Version=25.6.0
-      MimeType={{ media_mime_types | join(';') }};
-  notify: Update desktop database
-
-
-- name: Set as default video player
-  command:
-    cmd: "xdg-mime default smplayer.desktop {{ media_mime_types | join(' ') }}"
