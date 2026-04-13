@@ -3,6 +3,20 @@
   import_tasks: sourcegit.yml
   when: ansible_distribution == "Debian"
 
+
 - name: Configure SourceGit
   import_tasks: configure.yml
   when: ansible_distribution == "Debian"
+
+
+- name: Create SourceGit shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: sourcegit.desktop
+    appname: SourceGit
+    icon: smplayer
+    exec: /opt/sourcegit/sourcegit.AppImage
+    path: /opt/sourcegit
+    categories:
+      - Notes

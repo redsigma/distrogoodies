@@ -17,27 +17,8 @@
 
     - name: Download sourcegit
       get_url:
-        url: https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.04/sourcegit-2026.04.linux.amd64.AppImage
+        url: https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.08/sourcegit-2026.08.linux.amd64.AppImage
         dest: /opt/sourcegit/sourcegit.AppImage
         mode: '0755'
 
   when: not install_binary.stat.exists
-
-
-- name: Update Sourcegit shortcut
-  copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/sourcegit.desktop"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-    content: |
-      #!/usr/bin/env xdg-open
-      [Desktop Entry]
-      Version=1.0
-      Type=Application
-      Name=SourceGit
-      Exec=/opt/sourcegit/sourcegit.AppImage
-      Path=/opt/sourcegit
-      Terminal=false
-      Categories=Notes;
-
