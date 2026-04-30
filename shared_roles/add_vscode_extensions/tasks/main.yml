@@ -1,0 +1,73 @@
+---
+- name: Ensure VSIX cache directory
+  file:
+    path: "{{ download_dir }}"
+    state: directory
+    owner: "{{ file_owner }}"
+    group: "{{ file_group }}"
+    mode: "0755"
+  when: extensions_vsix | length > 0
+
+- name: List installed extensions
+  command:
+    cmd: >-
+      {{ path_exec }}
+      -- --list-extensions
+  register: installed_extensions
+  changed_when: false
+  failed_when: false
+
+- name: Install regular VS Code extensions
+  command:
+    cmd: >-
+      {{ path_exec }}
+      -- --install-extension {{ item | quote }}
+  loop: "{{ extensions_regular }}"
+  when: item not in installed_extensions.stdout_lines
+  register: regular_extension_install_result
+  changed_when: true
+
+- name: Fetch Marketplace VSIX extension
+  set_fact:
+    extensions_vsix_resolved: "{{ extensions_vsix_resolved | default([]) + [resolved_vsix_extension] }}"
+  vars:
+    extension_id: "{{ item.id | default(item.publisher ~ '.' ~ item.name) }}"
+    vsix_filename: "{{ extension_id }}-{{ item.version }}.vsix"
+    extension_version: "{{ item.version | default('latest') }}"
+    resolved_vsix_url: >-
+      https://{{ item.publisher | lower }}.gallery.vsassets.io/_apis/public/gallery/publisher/{{ item.publisher }}/extension/{{ item.name }}/{{ extension_version }}/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage
+    resolved_vsix_extension:
+      id: "{{ extension_id }}"
+      publisher: "{{ item.publisher }}"
+      name: "{{ item.name }}"
+      version: "{{ extension_version }}"
+      filename: "{{ vsix_filename }}"
+      url: "{{ resolved_vsix_url }}"
+      path: "{{ download_dir }}/{{ vsix_filename }}"
+  loop: "{{ extensions_vsix }}"
+  when: extensions_vsix | length > 0
+
+- name: Download Marketplace VSIX packages
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.path }}"
+    owner: "{{ file_owner }}"
+    group: "{{ file_group }}"
+    mode: "0644"
+  loop: "{{ extensions_vsix_resolved | default([]) }}"
+
+- name: Install missing Marketplace VSIX extensions
+  command:
+    cmd: >-
+      {{ path_exec }}
+      -- --install-extension {{ item.path | quote }}
+  loop: "{{ extensions_vsix_resolved | default([]) }}"
+  when: item.id not in installed_extensions.stdout_lines
+  register: vsix_extension_install_result
+  changed_when: true
+
+- name: Remove VSIX cache directory
+  ansible.builtin.file:
+    path: "{{ download_dir }}"
+    state: absent
+  when: extensions_vsix | length > 0

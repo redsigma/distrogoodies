@@ -1,0 +1,28 @@
+---
+- name: Check vscodium
+  stat:
+    path: /opt/vscodium/vscodium.AppImage
+  register: install_binary
+
+
+- name: Install vscodium
+  vars:
+    version: "1.116.02821"
+
+  block:
+    - name: Ensure vscodium directory
+      become: true
+      file:
+        path: /opt/vscodium
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+
+    - name: Download vscodium
+      get_url:
+        url: https://github.com/VSCodium/vscodium/releases/download/{{ version }}/VSCodium-{{ version }}.glibc2.30-x86_64.AppImage
+        # url: https://github.com/valicm/VSCode-AppImage/releases/download/1.118.1/VSCode-x86_64.AppImage
+        dest: /opt/vscodium/vscodium.AppImage
+        mode: '0755'
+
+  when: not install_binary.stat.exists

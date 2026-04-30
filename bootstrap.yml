@@ -73,6 +73,12 @@
     # @optional apps
     #
 
+    - name: Install VSCodium
+      tags: vscodium
+      import_role:
+        name: vscodium
+
+
     - name: Install Sourcegit
       tags: sourcegit
       import_role:

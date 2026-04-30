@@ -1,0 +1,106 @@
+---
+- name: Install VSCodium
+  import_tasks: vscodium.yml
+  when: ansible_distribution == "Debian"
+
+
+# - name: Add VSCodium extensions
+#   include_role:
+#     name: add_vscode_extensions
+#   vars:
+#     path_exec: >-
+#       /opt/vscodium/vscodium.AppImage
+#       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
+#       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
+
+#     extensions_regular:
+#       - rogalmic.bash-debug
+#       - samuelcolvin.jinjahtml
+#       - wholroyd.jinja
+#       - yeshan333.jenkins-pipeline-linter-connector-fork
+#       - pkief.material-icon-theme
+
+#       - ms-python.pylint
+#       - ms-python.python
+#       - franneck94.vscode-python-config
+#       - ms-python.debugpy
+#       - ms-python.vscode-python-envs
+
+#       - njqdev.vscode-python-typehint
+#       - timonwong.shellcheck
+#       - yy0931.vscode-sqlite3-editor
+#       - redhat.vscode-yaml
+
+#     extensions_vsix:
+#       - publisher: mariogarrido
+#         name: gpg-sign
+#         version: 0.2.0
+
+
+- name: Create VSCodium shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: vscodium.desktop
+    appname: Codium
+    generic_name: Text Editor
+    startup_class: VSCodium
+    comment: Code Editing
+    icon: vscodium
+    exec: >-
+      /opt/vscodium/vscodium.AppImage
+      --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
+      --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
+      %F
+
+    categories:
+      - TextEditor
+      - Development
+      - IDE
+
+    mime_types:
+      - text/plain
+      - inode/directory
+      - application/x-codium-workspace
+
+    actions:
+      - id: new-empty-window
+        name: New Empty Window
+        exec: >-
+          /opt/vscodium/vscodium.AppImage
+          --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
+          --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
+          --new-window
+          %F
+
+
+- name: Create VSCodium Claude shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: claude.desktop
+    appname: Claude
+    generic_name: Text Editor
+    startup_class: VSCodium
+    comment: Code Editing
+    icon: vscodium
+    exec: >-
+      /opt/vscodium/vscodium.AppImage
+      --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/data
+      --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
+      %F
+
+    categories:
+      - TextEditor
+      - Development
+      - IDE
+
+    actions:
+      - id: new-empty-window
+        name: New Empty Window
+        exec: >-
+          /opt/vscodium/vscodium.AppImage
+          --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/data
+          --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
+          --new-window
+          %F
