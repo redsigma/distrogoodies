@@ -15,7 +15,7 @@
   vars:
     filename: sourcegit.desktop
     appname: SourceGit
-    icon: smplayer
+    icon: sourcegit
     exec: /opt/sourcegit/sourcegit.AppImage
     path: /opt/sourcegit
     categories:
