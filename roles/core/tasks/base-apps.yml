@@ -9,6 +9,7 @@
       - xclip
       - gpg
       - tmux
+      - rsync
       - git
       - gitk
       - btop
