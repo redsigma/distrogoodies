@@ -1,5 +1,6 @@
-[credential] # https://github.com/git-ecosystem/git-credential-manager/blob/main/docs/configuration.md
-  helper = manager
+# https://github.com/git-ecosystem/git-credential-manager/blob/main/docs/configuration.md
+[credential]
+    helper = !"/usr/local/bin/git-credential-manager"
 
 [core]
 #   pager = delta  # compare with nvimdiff
