@@ -1,24 +1,8 @@
 ---
-- name: Check sourcegit
-  stat:
-    path: /opt/sourcegit/sourcegit.AppImage
-  register: install_binary
-
-
 - name: Install sourcegit
-  block:
-    - name: Ensure sourcegit directory
-      become: true
-      file:
-        path: /opt/sourcegit
-        state: directory
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_gid }}"
-
-    - name: Download sourcegit
-      get_url:
-        url: https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.12/sourcegit-2026.12.linux.amd64.AppImage
-        dest: /opt/sourcegit/sourcegit.AppImage
-        mode: '0755'
-
-  when: not install_binary.stat.exists
+  include_role:
+    name: download_to_location
+  vars:
+    url: "https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.12/sourcegit-2026.12.linux.amd64.AppImage"
+    destination: "/opt/sourcegit"
+    appname: "sourcegit.AppImage"
