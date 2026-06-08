@@ -2,6 +2,7 @@ enabled: true
 terminal: false
 hidden: false
 nodisplay: false
+single_main_window: false
 categories: []
 mime_types: []
 

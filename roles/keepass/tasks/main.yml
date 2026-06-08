@@ -2,3 +2,29 @@
 - name: Install KeePassXC
   import_tasks: keepass.yml
   when: ansible_distribution == "Debian"
+
+
+- name: Create KeePassXC shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: keepassxc.desktop
+    appname: KeePassXC
+    generic_name: Password Manager
+    icon: keepassxc
+    exec: /opt/keepassxc/keepassxc.AppImage
+    startup_class: keepassxc
+    single_main_window: true
+    keywords:
+      - security
+      - privacy
+      - password-manager
+      - yubikey
+      - password
+      - keepass
+    categories:
+      - Utility
+      - Security
+      - Qt
+    mime_types:
+      - application/x-keepass2

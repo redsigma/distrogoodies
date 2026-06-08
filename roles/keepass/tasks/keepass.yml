@@ -12,25 +12,7 @@
   block:
     - name: Download KeePassXC AppImage
       get_url:
-        url: https://github.com/keepassxreboot/keepassxc/releases/download/2.7.11/KeePassXC-2.7.11-1-x86_64.AppImage
+        url: https://github.com/keepassxreboot/keepassxc/releases/download/2.7.12/KeePassXC-2.7.12-x86_64.AppImage
         dest: /opt/keepassxc/keepassxc.AppImage
+        timeout: 120
         mode: '0755'
-
-
-- name: Update KeePassXC shortcut
-  copy:
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/keepassxc.desktop"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-    content: |
-      #!/usr/bin/env xdg-open
-      [Desktop Entry]
-      Version=1.0
-      Type=Application
-      Name=KeePassXC
-      Exec=/opt/keepassxc/keepassxc.AppImage
-      Path=/opt/keepassxc
-      Terminal=false
-      Categories=Notes;
-

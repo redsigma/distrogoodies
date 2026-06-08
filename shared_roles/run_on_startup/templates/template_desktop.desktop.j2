@@ -38,6 +38,9 @@ Hidden={{ hidden | ternary('true', 'false') }}
 {% if nodisplay %}
 NoDisplay={{ nodisplay | ternary('true', 'false') }}
 {% endif %}
+{% if single_main_window %}
+SingleMainWindow={{ single_main_window | ternary('true', 'false') }}
+{% endif %}
 {#
 
 Categories
