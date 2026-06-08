@@ -17,7 +17,7 @@
 
     - name: Download sourcegit
       get_url:
-        url: https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.08/sourcegit-2026.08.linux.amd64.AppImage
+        url: https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.12/sourcegit-2026.12.linux.amd64.AppImage
         dest: /opt/sourcegit/sourcegit.AppImage
         mode: '0755'
 
