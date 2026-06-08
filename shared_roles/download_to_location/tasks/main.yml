@@ -1,0 +1,92 @@
+---
+- name: Validate variables
+  assert:
+    that:
+      - appname is defined
+      - appname | length > 0
+      - url is defined
+      - url | length > 0
+      - destination is defined
+      - destination | length > 0
+      - install_type is defined
+      - install_type in ['binary', 'archive']
+    fail_msg: "Mandatory parameters not defined"
+    quiet: true
+
+
+- name: Check {{ appname }}
+  stat:
+    path: "{{ destination }}/{{ appname }}"
+  register: install_binary
+
+
+- name: Install {{ appname }}
+  when:
+    - install_type == 'binary'
+    - not install_binary.stat.exists
+  block:
+    - name: Ensure {{ appname }} directory
+      become: true
+      file:
+        path: "{{ destination }}"
+        state: directory
+        owner: "{{ file_owner }}"
+        group: "{{ file_group }}"
+        mode: "0755"
+
+    - name: Download {{ appname }}
+      get_url:
+        url: "{{ url }}"
+        dest: "{{ destination }}/{{ appname }}"
+        mode: "{{ file_mode }}"
+        timeout: "{{ download_timeout }}"
+
+      register: download_result
+      retries: "{{ task_retry_times }}"
+      delay: "{{ task_retry_delay }}"
+      until: download_result is succeeded
+
+
+- name: Install {{ appname }} archive
+  when:
+    - install_type == 'archive'
+    - not install_binary.stat.exists
+  block:
+    - name: Ensure {{ appname }} directory
+      become: true
+      file:
+        path: "{{ destination }}"
+        state: directory
+        owner: "{{ file_owner }}"
+        group: "{{ file_group }}"
+        mode: "0755"
+
+    - name: Download {{ appname }} archive
+      become: true
+      get_url:
+        url: "{{ url }}"
+        dest: "/tmp/{{ appname }}"
+        mode: "0644"
+        timeout: "{{ download_timeout }}"
+        checksum: "{{ download_checksum | default(omit) }}"
+
+      register: archive_download_result
+      retries: "{{ task_retry_times }}"
+      delay: "{{ task_retry_delay }}"
+      until: archive_download_result is succeeded
+
+    - name: Extract {{ appname }} archive
+      become: true
+      unarchive:
+        src: "/tmp/{{ appname }}"
+        dest: "{{ destination }}"
+        remote_src: true
+        extra_opts: "{{ archive_extra_opts | default(omit) }}"
+
+    - name: Ensure {{ appname }} permissions
+      become: true
+      file:
+        path: "{{ destination }}/{{ appname }}"
+        owner: "{{ file_owner }}"
+        group: "{{ file_group }}"
+        mode: "{{ file_mode }}"

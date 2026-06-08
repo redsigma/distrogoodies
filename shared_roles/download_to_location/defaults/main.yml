@@ -1,0 +1,7 @@
+file_mode: "0755"
+file_owner: "{{ ansible_user_id }}"
+file_group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+install_type: "binary"
+download_timeout: 120
+task_retry_delay: 5
+task_retry_times: 5
