@@ -4,37 +4,40 @@
   when: ansible_distribution == "Debian"
 
 
-# - name: Add VSCodium extensions
-#   include_role:
-#     name: add_vscode_extensions
-#   vars:
-#     path_exec: >-
-#       /opt/vscodium/vscodium.AppImage
-#       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
-#       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
+#
+#  Default profile
+#
+- name: Add VSCodium extensions
+  include_role:
+    name: add_vscode_extensions
+  vars:
+    path_exec: /opt/vscodium/vscodium.AppImage
+    path_exec_args: >-
+      --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
+      --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
 
-#     extensions_regular:
-#       - rogalmic.bash-debug
-#       - samuelcolvin.jinjahtml
-#       - wholroyd.jinja
-#       - yeshan333.jenkins-pipeline-linter-connector-fork
-#       - pkief.material-icon-theme
+    extensions_regular:
+      - rogalmic.bash-debug
+      - samuelcolvin.jinjahtml
+      - wholroyd.jinja
+      - yeshan333.jenkins-pipeline-linter-connector-fork
+      - pkief.material-icon-theme
 
-#       - ms-python.pylint
-#       - ms-python.python
-#       - franneck94.vscode-python-config
-#       - ms-python.debugpy
-#       - ms-python.vscode-python-envs
+      - ms-python.pylint
+      - ms-python.python
+      - franneck94.vscode-python-config
+      - ms-python.debugpy
+      - ms-python.vscode-python-envs
 
-#       - njqdev.vscode-python-typehint
-#       - timonwong.shellcheck
-#       - yy0931.vscode-sqlite3-editor
-#       - redhat.vscode-yaml
+      - njqdev.vscode-python-typehint
+      - timonwong.shellcheck
+      - yy0931.vscode-sqlite3-editor
+      - redhat.vscode-yaml
 
-#     extensions_vsix:
-#       - publisher: mariogarrido
-#         name: gpg-sign
-#         version: 0.2.0
+    extensions_vsix:
+      - publisher: mariogarrido
+        name: gpg-sign
+        version: 0.2.0
 
 
 - name: Create VSCodium shortcut
@@ -72,6 +75,23 @@
           --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
           --new-window
           %F
+
+
+
+#
+#  Claude profile
+#
+- name: Add VSCodium extensions
+  include_role:
+    name: add_vscode_extensions
+  vars:
+    path_exec: /opt/vscodium/vscodium.AppImage
+    path_exec_args: >-
+      --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/data
+      --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
+
+    extensions_regular:
+      - anthropic.claude-code
 
 
 - name: Create VSCodium Claude shortcut

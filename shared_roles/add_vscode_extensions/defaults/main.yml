@@ -1,6 +1,7 @@
 ---
 # vscode binary
 path_exec: /usr/bin/code
+path_exec_args: ""
 
 # where downloaded VSIX files are cached.
 download_dir: /tmp/vsix
