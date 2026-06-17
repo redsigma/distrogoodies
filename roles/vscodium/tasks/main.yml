@@ -93,6 +93,11 @@
     extensions_regular:
       - anthropic.claude-code
 
+    extensions_vsix:
+      - publisher: mariogarrido
+        name: gpg-sign
+        version: 0.2.0
+
 
 - name: Create VSCodium Claude shortcut
   include_role:
