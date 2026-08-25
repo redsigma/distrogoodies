@@ -119,6 +119,12 @@
         name: secret-manager
 
 
+    - name: Install Helm Charts
+      tags: helm
+      import_role:
+        name: helm
+
+
     - name: Install Maven
       tags: maven
       import_role:

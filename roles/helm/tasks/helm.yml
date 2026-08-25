@@ -1,0 +1,33 @@
+---
+- name: Check helm is installed
+  stat:
+    path: "/opt/helm/helm"
+  register: install_binary
+
+- name: Setup helm
+  when: not install_binary.stat.exists
+  block:
+    - name: Install Helm
+      include_role:
+        name: download_to_location
+      vars:
+        url: "https://get.helm.sh/helm-v4.2.4-linux-amd64.tar.gz"
+        destination: "/opt/helm"
+        appname: "helm"
+        install_type: "archive"
+        file_mode: "0755"
+        archive_extra_opts:
+          - "--strip-components=1"
+
+    - name: Ensure .local/bin exists
+      file:
+        path: "{{ ansible_env.HOME }}/.local/bin"
+        state: directory
+        mode: "0755"
+
+    - name: Symlink Helm into local bin
+      file:
+        src: "/opt/helm/helm"
+        dest: "{{ ansible_env.HOME }}/.local/bin/helm"
+        state: link
+        force: true
