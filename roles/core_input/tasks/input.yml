@@ -1,0 +1,22 @@
+---
+- name: Ensure GTK 3 config
+  become: true
+  file:
+    path: /etc/gtk-3.0
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Disable error and input feedback soundsv
+  become: true
+  copy:
+    dest: /etc/gtk-3.0/settings.ini
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      [Settings]
+      gtk-error-bell=false
+      gtk-enable-input-feedback-sounds=false
+      gtk-enable-event-sounds=false

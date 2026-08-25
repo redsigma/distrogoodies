@@ -28,6 +28,12 @@
         name: core_display
 
 
+    - name: Install core [input]
+      tags: core_input
+      import_role:
+        name: core_input
+
+
     - name: Install toolchains
       tags: toolchain
       import_role:
