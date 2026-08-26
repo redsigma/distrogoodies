@@ -131,6 +131,12 @@
         name: helm
 
 
+    - name: Install Golang
+      tags: golang
+      import_role:
+        name: golang
+
+
     - name: Install Maven
       tags: maven
       import_role:

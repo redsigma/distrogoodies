@@ -1,0 +1,31 @@
+---
+- name: Check Golang is installed
+  stat:
+    path: "/opt/go/bin/go"
+  register: install_binary
+
+- name: Setup Golang
+  when: not install_binary.stat.exists
+  block:
+    - name: Install Golang
+      include_role:
+        name: download_to_location
+      vars:
+        url: "https://go.dev/dl/go1.27.0.linux-amd64.tar.gz"
+        destination: "/opt"
+        appname: "go"
+        install_type: "archive"
+        file_mode: "0755"
+
+    - name: Ensure .local/bin exists
+      file:
+        path: "{{ ansible_env.HOME }}/.local/bin"
+        state: directory
+        mode: "0755"
+
+    - name: Symlink Golang into local bin
+      file:
+        src: "/opt/go/bin/go"
+        dest: "{{ ansible_env.HOME }}/.local/bin/go"
+        state: link
+        force: true

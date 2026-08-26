@@ -1,0 +1,4 @@
+---
+- name: Install Golang
+  import_tasks: golang.yml
+  when: ansible_distribution == "Debian"
