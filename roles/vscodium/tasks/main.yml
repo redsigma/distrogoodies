@@ -129,3 +129,76 @@
           --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
           --new-window
           %F
+
+
+
+#
+#  Golang profile
+#
+- name: Add VSCodium Golang extensions
+  include_role:
+    name: add_vscode_extensions
+  vars:
+    path_exec: /opt/vscodium/vscodium.AppImage
+    path_exec_args: >-
+      --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data
+      --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/extensions
+
+    extensions_regular:
+      - golang.go
+      - redhat.vscode-yaml
+
+    extensions_vsix: []
+
+
+- name: Ensure VSCodium Golang settings directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data/User"
+    state: directory
+    mode: "0755"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+
+
+- name: Configure VSCodium Golang profile
+  copy:
+    dest: "{{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data/User/settings.json"
+    content: |
+      {
+          "go.toolsGopath": "${workspaceFolder}/.tools/go"
+      }
+    mode: "0600"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+
+
+- name: Create VSCodium Golang shortcut
+  include_role:
+    name: create_shortcut
+  vars:
+    filename: golang.desktop
+    appname: Golang
+    generic_name: Text Editor
+    startup_class: VSCodium
+    comment: Code Editing
+    icon: vscodium
+    exec: >-
+      /opt/vscodium/vscodium.AppImage
+      --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data
+      --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/extensions
+      %F
+
+    categories:
+      - TextEditor
+      - Development
+      - IDE
+
+    actions:
+      - id: new-empty-window
+        name: New Empty Window
+        exec: >-
+          /opt/vscodium/vscodium.AppImage
+          --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data
+          --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/extensions
+          --new-window
+          %F
