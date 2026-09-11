@@ -1,5 +1,6 @@
 ---
 - name: Ensure keyring folder exist
+  become: true
   file:
     path: /etc/apt/keyrings
     state: directory
@@ -10,10 +11,10 @@
   become: true
   apt:
     pkg:
+      - gnupg
       - python3-debian
       - python3-apt
     state: present
-    update_cache: yes
 
 
 - name: Install Microsoft keys
@@ -38,4 +39,11 @@
 
 - name: Install Docker keys
   import_tasks: docker_gpg.yml
+  when: ansible_distribution == "Debian"
+
+
+- name: Refresh apt package indexes after repository keys
+  become: true
+  apt:
+    update_cache: true
   when: ansible_distribution == "Debian"

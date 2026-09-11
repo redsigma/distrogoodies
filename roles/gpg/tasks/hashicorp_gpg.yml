@@ -5,22 +5,23 @@
 - name: Add Hashicorp gpg keys
   become: true
   block:
-    - name: "[TRANSIENT] Gathering repo key"
+    - name: Check current Hashicorp keyring
+      stat:
+        path: "{{ hashicorp_gpg }}"
+      register: hashicorp_gpg_info
+
+    - name: Download current Hashicorp repository key
       get_url:
         url: https://apt.releases.hashicorp.com/gpg
-        dest: /etc/apt/keyrings/hashicorp-archive-keyring
+        dest: /etc/apt/keyrings/hashicorp-archive-keyring.asc
         mode: '0644'
+      register: hashicorp_key_download
 
-    - name: Creating gpg key
+    - name: Import current Hashicorp repository key
       command:
         cmd: >
-          gpg --dearmor
+          gpg --dearmor --yes
           --output "{{ hashicorp_gpg }}"
-          /etc/apt/keyrings/hashicorp-archive-keyring
-      args:
-        creates: "{{ hashicorp_gpg }}"
-
-    - name: "[TRANSIENT] Cleanup leftover key file"
-      file:
-        path: /etc/apt/keyrings/hashicorp-archive-keyring
-        state: absent
+          /etc/apt/keyrings/hashicorp-archive-keyring.asc
+      when:
+        - hashicorp_key_download.changed or not hashicorp_gpg_info.stat.exists

@@ -16,6 +16,11 @@
   hosts: localhost
   tasks:
 
+    - name: Install gpg keys
+      tags: gpg
+      import_role:
+        name: gpg
+
     - name: Install core [apps]
       tags: core
       import_role:
@@ -38,12 +43,6 @@
       tags: toolchain
       import_role:
         name: toolchain
-
-
-    - name: Install gpg keys
-      tags: gpg
-      import_role:
-        name: gpg
 
 
     - name: Install fonts
