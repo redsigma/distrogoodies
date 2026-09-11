@@ -1,0 +1,7 @@
+---
+- name: Install Skopeo package
+  become: true
+  apt:
+    name: skopeo
+    state: present
+    update_cache: true

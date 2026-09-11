@@ -1,0 +1,4 @@
+---
+- name: Install Skopeo
+  import_tasks: skopeo.yml
+  when: ansible_distribution == "Debian"

@@ -119,6 +119,11 @@
       import_role:
         name: docker
 
+    - name: Install Skopeo
+      tags: skopeo
+      import_role:
+        name: skopeo
+
     - name: Install Hashicorp Vault
       tags: hashicorp_vault
       import_role:
