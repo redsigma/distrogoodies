@@ -1,0 +1,36 @@
+---
+- name: Check {{ gpg_key.name }} keyring
+  become: true
+  stat:
+    path: "{{ gpg_key.keyring }}"
+  register: gpg_keyring_info
+
+
+- name: Download {{ gpg_key.name }} public key
+  become: true
+  get_url:
+    url: "{{ gpg_key.source_url }}"
+    dest: "{{ key_cache_directory }}/{{ gpg_key.name }}.asc"
+    mode: "0644"
+  register: gpg_key_download
+
+
+- name: Convert {{ gpg_key.name }} public key to a keyring
+  become: true
+  command:
+    argv:
+      - gpg
+      - --dearmor
+      - --yes
+      - --output
+      - "{{ gpg_key.keyring }}"
+      - "{{ key_cache_directory }}/{{ gpg_key.name }}.asc"
+  when:
+    - gpg_key_download.changed or not gpg_keyring_info.stat.exists
+
+
+- name: Set {{ gpg_key.name }} keyring permissions
+  become: true
+  file:
+    path: "{{ gpg_key.keyring }}"
+    mode: "0644"

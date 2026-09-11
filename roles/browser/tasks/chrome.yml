@@ -1,27 +1,8 @@
 ---
-- name: Adding Google Chrome repo
-  become: true
-  deb822_repository:
-    name: google-chrome
-    types:
-      - deb
-    uris: https://dl.google.com/linux/chrome/deb/
-    suites:
-      - stable
-    components:
-      - main
-    architectures:
-      - amd64
-    signed_by: "{{ google_gpg }}"
-    enabled: true
-    state: present
-
-
 - name: Install Google Chrome browser
   become: true
   apt:
     pkg:
       - google-chrome-stable
-    update_cache: yes
     state: present
 

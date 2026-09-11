@@ -1,0 +1,71 @@
+---
+- name: Ensure APT keyring directory exists
+  become: true
+  file:
+    path: "{{ keyring_directory }}"
+    state: directory
+    mode: "0755"
+  when:
+    - ansible_distribution == "Debian"
+    - key_sources | length > 0
+
+
+- name: Ensure GPG key cache directory exists
+  become: true
+  file:
+    path: "{{ key_cache_directory }}"
+    state: directory
+    mode: "0755"
+  when:
+    - ansible_distribution == "Debian"
+    - key_sources | length > 0
+
+
+- name: Validate GPG key definitions
+  assert:
+    that:
+      - item.name is defined
+      - item.source_url is defined
+      - item.source_type in ['public_key', 'keyring_package']
+      - item.keyring is defined
+    fail_msg: "Invalid GPG key definition: {{ item.name | default('unnamed') }}"
+  loop: "{{ key_sources }}"
+  loop_control:
+    label: "{{ item.name | default('unnamed') }}"
+  when:
+    - ansible_distribution == "Debian"
+    - key_sources | length > 0
+
+
+- name: Install dependencies required to manage GPG keys
+  become: true
+  apt:
+    pkg:
+      - gnupg
+      - python3-apt
+    state: present
+  when:
+    - ansible_distribution == "Debian"
+    - key_sources | length > 0
+
+
+- name: Install public APT signing keys
+  include_tasks: public_key.yml
+  loop: "{{ key_sources | selectattr('source_type', 'equalto', 'public_key') | list }}"
+  loop_control:
+    loop_var: gpg_key
+    label: "{{ gpg_key.name }}"
+  when:
+    - ansible_distribution == "Debian"
+    - key_sources | length > 0
+
+
+- name: Install packaged APT signing keys
+  include_tasks: keyring_package.yml
+  loop: "{{ key_sources | selectattr('source_type', 'equalto', 'keyring_package') | list }}"
+  loop_control:
+    loop_var: gpg_key
+    label: "{{ gpg_key.name }}"
+  when:
+    - ansible_distribution == "Debian"
+    - key_sources | length > 0

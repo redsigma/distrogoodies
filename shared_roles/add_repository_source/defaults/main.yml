@@ -1,0 +1,7 @@
+---
+repository_sources: []
+key_sources: []
+repository_default_suites:
+  - /
+repository_default_architectures:
+  - amd64

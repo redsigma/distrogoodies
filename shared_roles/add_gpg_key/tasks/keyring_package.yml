@@ -1,0 +1,24 @@
+---
+- name: Download {{ gpg_key.name }} keyring package
+  become: true
+  get_url:
+    url: "{{ gpg_key.source_url }}"
+    dest: "{{ key_cache_directory }}/{{ gpg_key.name }}.deb"
+    mode: "0644"
+
+
+- name: Install {{ gpg_key.name }} keyring package
+  become: true
+  apt:
+    deb: "{{ key_cache_directory }}/{{ gpg_key.name }}.deb"
+    state: present
+
+
+- name: Validate {{ gpg_key.name }} keyring file
+  become: true
+  command:
+    argv:
+      - dpkg
+      - --install
+      - "{{ key_cache_directory }}/{{ gpg_key.name }}.deb"
+    creates: "{{ gpg_key.keyring }}"

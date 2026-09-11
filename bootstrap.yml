@@ -16,10 +16,11 @@
   hosts: localhost
   tasks:
 
-    - name: Install gpg keys
-      tags: gpg
+    - name: Install core [repositories]
+      tags: core_repositories
       import_role:
-        name: gpg
+        name: core_repositories
+
 
     - name: Install core [apps]
       tags: core

@@ -1,0 +1,87 @@
+---
+gpg_keys:
+  - name: microsoft
+    source_url: https://packages.microsoft.com/keys/microsoft.asc
+    source_type: public_key
+    keyring: /etc/apt/keyrings/microsoft-linux-signing-key.gpg
+
+  - name: google
+    source_url: https://dl.google.com/linux/linux_signing_key.pub
+    source_type: public_key
+    keyring: /etc/apt/keyrings/google-linux-signing-key.gpg
+
+  - name: ueberzugpp
+    source_url: https://download.opensuse.org/repositories/home:justkidding/Debian_13/Release.key
+    source_type: public_key
+    keyring: /etc/apt/keyrings/ueberzugpp-Release.gpg
+
+  - name: hashicorp
+    source_url: https://apt.releases.hashicorp.com/gpg
+    source_type: public_key
+    keyring: /etc/apt/keyrings/hashicorp-archive-keyring.gpg
+
+  - name: docker
+    source_url: https://download.docker.com/linux/debian/gpg
+    source_type: public_key
+    keyring: /etc/apt/keyrings/docker.gpg
+
+  - name: deb-multimedia
+    source_url: https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2024.9.1_all.deb
+    source_type: keyring_package
+    keyring: /usr/share/keyrings/deb-multimedia-keyring.pgp
+
+
+
+apt_repositories:
+  - name: vscode
+    key: microsoft
+    uris: https://packages.microsoft.com/repos/vscode
+    suites:
+      - stable
+    components:
+      - main
+
+  - name: azure-vpn
+    key: microsoft
+    uris: https://packages.microsoft.com/ubuntu/22.04/prod
+    suites:
+      - jammy
+    components:
+      - main
+
+  - name: google-chrome
+    key: google
+    uris: https://dl.google.com/linux/chrome/deb/
+    suites:
+      - stable
+    components:
+      - main
+
+  - name: ueberzugpp
+    key: ueberzugpp
+    uris: http://download.opensuse.org/repositories/home:/justkidding/Debian_13/
+
+  - name: hashicorp
+    key: hashicorp
+    uris: https://apt.releases.hashicorp.com
+    suites:
+      - trixie
+    components:
+      - main
+
+  - name: docker
+    key: docker
+    uris: https://download.docker.com/linux/debian/
+    suites:
+      - trixie
+    components:
+      - stable
+
+  - name: deb-multimedia
+    key: deb-multimedia
+    uris: https://www.deb-multimedia.org
+    suites:
+      - trixie
+    components:
+      - main
+      - non-free

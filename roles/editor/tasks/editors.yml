@@ -1,28 +1,7 @@
 ---
-- name: Adding VisualStudio Code repo
-  become: true
-  deb822_repository:
-    name: vscode
-    types:
-      - deb
-    uris: https://packages.microsoft.com/repos/vscode
-    suites:
-      - stable
-    components:
-      - main
-    architectures:
-      - amd64
-    signed_by: "{{ ms_gpg }}"
-    enabled: true
-    state: present
-
-
 - name: Install VisualStudio Code
   become: true
   apt:
     pkg:
       - code
-    update_cache: yes
     state: present
-
-

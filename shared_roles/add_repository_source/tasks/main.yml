@@ -1,0 +1,64 @@
+---
+- name: Validate APT repository definitions
+  assert:
+    that:
+      - item.name is defined
+      - item.key is not defined or item.key in (key_sources | map(attribute='name') | list)
+      - item.uris is defined
+    fail_msg: "Invalid APT repository definition: {{ item.name | default('unnamed') }}"
+  loop: "{{ repository_sources }}"
+  loop_control:
+    label: "{{ item.name | default('unnamed') }}"
+  when:
+    - ansible_distribution == "Debian"
+    - repository_sources | length > 0
+
+
+- name: Install dependencies required to manage APT repositories
+  become: true
+  apt:
+    pkg:
+      - python3-debian
+      - python3-apt
+    state: present
+  when:
+    - ansible_distribution == "Debian"
+    - repository_sources | length > 0
+
+
+- name: Configure APT repository sources
+  become: true
+  deb822_repository:
+    name: "{{ item.name }}"
+    types: "{{ item.types | default(['deb']) }}"
+    uris: "{{ [item.uris] if item.uris is string else item.uris }}"
+    suites: "{{ item.suites | default(repository_default_suites) }}"
+    components: "{{ item.components | default(omit) }}"
+    architectures: "{{ item.architectures | default(repository_default_architectures) }}"
+    signed_by: >-
+      {{
+        (
+          key_sources
+          | selectattr('name', 'equalto', item.key | default(''))
+          | map(attribute='keyring')
+          | first
+          | default(omit)
+        )
+      }}
+    enabled: "{{ item.enabled | default(true) }}"
+    state: "{{ item.state | default('present') }}"
+  loop: "{{ repository_sources }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - ansible_distribution == "Debian"
+    - repository_sources | length > 0
+
+
+- name: Refresh APT package indexes after repository sources are configured
+  become: true
+  apt:
+    update_cache: true
+  when:
+    - ansible_distribution == "Debian"
+    - repository_sources | length > 0

@@ -1,22 +1,4 @@
 ---
-- name: Adding Docker repo
-  become: true
-  deb822_repository:
-    name: docker
-    types:
-      - deb
-    uris: https://download.docker.com/linux/debian/
-    suites:
-      - trixie
-    components:
-      - stable
-    architectures:
-      - amd64
-    signed_by: "{{ docker_gpg }}"
-    enabled: true
-    state: present
-
-
 - name: Install Docker
   become: true
   apt:
@@ -26,7 +8,6 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
-    update_cache: yes
     state: present
 
 
@@ -48,4 +29,3 @@
     name: docker
     enabled: true
     state: started
-

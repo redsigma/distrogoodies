@@ -1,28 +1,9 @@
 ---
-- name: Adding Azure VPN repo
-  become: true
-  deb822_repository:
-    name: azure-vpn
-    types:
-      - deb
-    uris: https://packages.microsoft.com/ubuntu/22.04/prod
-    suites:
-      - jammy   # Ubuntu 22.04 Jammy
-    components:
-      - main
-    architectures:
-      - amd64
-    signed_by: "{{ ms_gpg }}"
-    enabled: true
-    state: present
-
-
 - name: Install Azure VPN
   become: true
   apt:
     pkg:
       - microsoft-azurevpnclient
-    update_cache: yes
     state: present
 
 

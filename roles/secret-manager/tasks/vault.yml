@@ -1,27 +1,7 @@
 ---
-- name: Adding Hashicorp repo
-  become: true
-  deb822_repository:
-    name: hashicorp
-    types:
-      - deb
-    uris: https://apt.releases.hashicorp.com
-    suites:
-      - trixie
-    components:
-      - main
-    architectures:
-      - amd64
-    signed_by: "{{ hashicorp_gpg }}"
-    enabled: true
-    state: present
-
-
 - name: Install Hashicorp Vault
   become: true
   apt:
     pkg:
       - vault
-    update_cache: yes
     state: present
-

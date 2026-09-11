@@ -1,0 +1,4 @@
+---
+key_sources: []
+keyring_directory: /etc/apt/keyrings
+key_cache_directory: /var/cache/apt/sources

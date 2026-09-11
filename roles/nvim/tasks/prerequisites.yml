@@ -1,23 +1,4 @@
 ---
-#
-#  @note: will add files under /etc/apt/sources.list.d
-#
-- name: Adding Neovim ueberzugpp repo
-  become: true
-  deb822_repository:
-    name: ueberzugpp
-    types:
-      - deb
-    uris: http://download.opensuse.org/repositories/home:/justkidding/Debian_13/
-    suites:
-      - /             # this is a flat repo
-    architectures:
-      - amd64
-    signed_by: "{{ ueberzugpp_gpg }}"
-    enabled: true
-    state: present
-
-
 - name: Install packages required by plugins
   become: true
   apt:
@@ -26,4 +7,3 @@
       - luarocks
       - ueberzugpp
     state: present
-    update_cache: yes

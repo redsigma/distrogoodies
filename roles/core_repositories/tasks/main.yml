@@ -1,0 +1,16 @@
+---
+- name: Add configured GPG keys
+  include_role:
+    name: add_gpg_key
+  vars:
+    key_sources: "{{ gpg_keys }}"
+  when: ansible_distribution == "Debian"
+
+
+- name: Add configured APT repository sources
+  include_role:
+    name: add_repository_source
+  vars:
+    repository_sources: "{{ apt_repositories }}"
+    key_sources: "{{ gpg_keys }}"
+  when: ansible_distribution == "Debian"
