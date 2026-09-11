@@ -6,9 +6,17 @@
       - item.key is not defined or item.key in (key_sources | map(attribute='name') | list)
       - item.uris is defined
     fail_msg: "Invalid APT repository definition: {{ item.name | default('unnamed') }}"
+    quiet: true
   loop: "{{ repository_sources }}"
   loop_control:
-    label: "{{ item.name | default('unnamed') }}"
+    label: >-
+      {{
+        (
+          ([item.uris] if (item.uris | default([])) is string else (item.uris | default([])))
+          + (item.suites | default(repository_default_suites))
+          + (item.components | default([]))
+        ) | join(' ')
+      }}
   when:
     - ansible_distribution == "Debian"
     - repository_sources | length > 0

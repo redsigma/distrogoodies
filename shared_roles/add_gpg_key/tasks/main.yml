@@ -29,9 +29,14 @@
       - item.source_type in ['public_key', 'keyring_package']
       - item.keyring is defined
     fail_msg: "Invalid GPG key definition: {{ item.name | default('unnamed') }}"
+    quiet: true
   loop: "{{ key_sources }}"
   loop_control:
-    label: "{{ item.name | default('unnamed') }}"
+    label: >-
+      {{ item.name | default('unnamed') }}
+      {{ item.source_type | default('unknown') }}
+      {{ item.source_url | default('no source URL') }}
+      -> {{ item.keyring | default('no keyring path') }}
   when:
     - ansible_distribution == "Debian"
     - key_sources | length > 0
