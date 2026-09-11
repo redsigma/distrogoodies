@@ -2,7 +2,6 @@
 - name: Install Maven
   become: true
   apt:
-    update_cache: true
     name:
       - maven
       - ca-certificates
@@ -46,4 +45,3 @@
         extra_opts:
           - "--strip-components=1"
       when: not jdk_21.stat.exists
-

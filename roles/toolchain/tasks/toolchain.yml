@@ -14,4 +14,3 @@
       - curl
       - doxygen
     state: present
-    update_cache: true

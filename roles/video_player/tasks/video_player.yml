@@ -6,7 +6,6 @@
       - zenity
       - libmpv-dev
       - libmpv2
-    update_cache: yes
     state: present
 
 

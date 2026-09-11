@@ -20,7 +20,6 @@
       - python3-pip
       - python3-dotenv
     state: present
-    update_cache: true
 
 #
 # @note: discard any packages or dependencies that might be related to other distros or are very heavy

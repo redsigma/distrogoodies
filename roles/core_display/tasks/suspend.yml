@@ -16,7 +16,6 @@
       - xfce4-screensaver
       - nvidia-suspend-common # required for proper suspend scripts
     state: present
-    update_cache: true
 
 
 - name: Copy nvidia modprobe files

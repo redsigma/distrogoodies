@@ -4,7 +4,6 @@
   apt:
     name: flatpak
     state: present
-    update_cache: yes
 
 - name: Check if OBS Studio (Flatpak) is installed
   command: flatpak --user info --show-commit com.obsproject.Studio

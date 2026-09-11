@@ -4,7 +4,6 @@
   apt:
     pkg:
       - systemd-resolved
-    update_cache: yes
     state: present
 
 

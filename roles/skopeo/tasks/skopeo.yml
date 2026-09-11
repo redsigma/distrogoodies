@@ -4,4 +4,3 @@
   apt:
     name: skopeo
     state: present
-    update_cache: true
