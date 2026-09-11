@@ -4,24 +4,6 @@
     user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.env.USER) }}"
 
 
-- name: Gather folder structure of dotfiles
-  find:
-    paths: "{{ playbook_dir }}/templates"
-    file_type: directory
-    recurse: true
-    hidden: yes
-  register: found_folders
-
-
-- name: Gather templated dotfiles
-  find:
-    paths: "{{ playbook_dir }}/templates"
-    file_type: file
-    recurse: true
-    hidden: true
-  register: found_files
-
-
 - name: Preparing dotfiles folder under ~/.config 
   set_fact:
     dotfiles_exclude_folders:
@@ -43,22 +25,27 @@
         )
       }}
 
-
-- name: Gather files under dotfiles folder
+- name: Gather private dotfiles folders
   set_fact:
-    dotfiles_items: >-
+    private_dotfiles_folders: >-
       {{
-        (dotfiles_items | default([]))
-        +
         (
-          lookup('ansible.builtin.filetree', 'templates/' ~ folder_name, wantlist=True)
-          | map('combine', {'folder_name': folder_name})
-          | list
+          lookup(
+            'ansible.builtin.filetree',
+            'private_data/roles/',
+            wantlist=True,
+            errors='ignore'
+          )
+          | default([], true)
         )
+        | selectattr('state', 'equalto', 'directory')
+        | map(attribute='path')
+        | select('match', '^[^/]+/templates/stow$')
+        | map('split', '/')
+        | map('first')
+        | unique
+        | list
       }}
-  loop: "{{ dotfiles_folders }}"
-  loop_control:
-    loop_var: folder_name
 
 
 - name: Ensure dotfiles folders exist under ~/.dotfiles
@@ -77,24 +64,25 @@
     src: "templates/stow/.stow-local-ignore"
     dest: "/home/{{ user }}/.dotfiles/.stow-local-ignore"
 
-
-- name: Generate configs (folder only)
-  become_user: "{{ user }}"
-  file:
-    path: "/home/{{ user }}/.dotfiles/{{ item.folder_name }}/{{ item.path }}"
-    state: directory
-  loop: "{{ dotfiles_items }}"
-  when: item.state == 'directory'
+- name: Generate public dotfiles packages
+  include_role:
+    name: stow_package
+  vars:
+    package_name: "{{ package_folder }}"
+    private_data: false
+    file_mode: null
+    hide_output: false
+  loop: "{{ dotfiles_folders }}"
   loop_control:
-    label: "~/{{ item.folder_name }}/{{ item.path }}"
+    loop_var: package_folder
 
-
-- name: Generate configs (files from template)
-  become_user: "{{ user }}"
-  template:
-    src: "{{ item.src }}"
-    dest: "/home/{{ user }}/.dotfiles/{{ item.folder_name }}/{{ item.path }}"
-  loop: "{{ dotfiles_items }}"
-  when: item.state == 'file'
+- name: Generate private dotfiles packages
+  include_role:
+    name: stow_package
+  vars:
+    package_name: "{{ package_folder }}"
+    private_data: true
+    load_vars: true
+  loop: "{{ private_dotfiles_folders }}"
   loop_control:
-    label: "~/{{ item.folder_name }}/{{ item.path }}"
+    loop_var: package_folder

@@ -1,0 +1,10 @@
+---
+# The caller must identify which dotfiles package is being generated.
+package_name: ""
+
+# Private packages read from private_data; public packages read from templates.
+private_data: true
+
+load_vars: false
+file_mode: "0600"
+hide_output: true

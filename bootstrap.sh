@@ -14,7 +14,6 @@ if [ ! -d "$SCRIPT_DIR/private_data" ]; then
     echo
 
     git clone --branch main https://${GIT_TOKEN}@github.com/redsigma/distrogoodies_internal.git $SCRIPT_DIR/private_data
-    rsync -aHAX --numeric-ids "${SCRIPT_DIR}/private_data/templates" "${SCRIPT_DIR}/"
 fi
 
 

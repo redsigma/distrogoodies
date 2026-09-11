@@ -1,0 +1,101 @@
+---
+# 1. Read files and folders from `templates/{{ package_name }}` or `private_data/roles/{{ package_name }}/templates/stow`.
+#
+# 2. All subfolders inside `templates/{{ package_name }}` or `private_data/roles/{{ package_name }}/templates/stow` 
+#    are created under `/home/<user>/.dotfiles/{{ package_name }}/`
+#
+# 3. Render each templated file into `/home/<user>/.dotfiles/{{ package_name }}/<path>`
+#   - <path> means it is the full path of of each templated file
+#     - it can be a direct file or other additional subfolders and then the file
+#
+# 4. Restow all packages from `/home/<user>/.dotfiles` into `/home/<user>`
+#   - For each path, create a symlink from `/home/<user>/<path>` to `/home/<user>/.dotfiles/{{ package_name }}/<path>`
+#   - Examples
+#     - ~/.config/nvim        -> ~/.dotfiles/nvim/.config/nvim
+#     - ~/.config/maven       -> ~/.dotfiles/maven/.config/maven
+#     - ~/.config/fblog.toml  -> ~/.dotfiles/fblog/.config/fblog.toml
+#     - ~/.config/git         -> ~/.dotfiles/git/.config/git
+#     - ~/.gitconfig          -> ~/.dotfiles/git/.gitconfig
+#     - ~/.xprofile           -> ~/.dotfiles/profile/.xprofile
+#     - ~/.tmux.conf          -> ~/.dotfiles/tmux/.tmux.conf
+#
+
+- name: Validate package name
+  assert:
+    that:
+      - package_name | length > 0
+    fail_msg: "package_name must identify the dotfiles package to configure"
+    quiet: true
+
+- name: Gather user
+  set_fact:
+    user: "{{ ansible_facts.env.SUDO_USER | default(ansible_facts.env.USER) }}"
+
+- name: Set template source directory
+  set_fact:
+    template_dir: >-
+      {{
+        ('private_data/roles/' ~ package_name ~ '/templates/stow')
+        if private_data
+        else
+        ('templates/' ~ package_name)
+      }}
+
+- name: Gather templated files
+  set_fact:
+    file_templates: >-
+      {{
+        lookup(
+          'ansible.builtin.filetree',
+          template_dir,
+          wantlist=True,
+          errors='ignore'
+        )
+        | default([], true)
+        | map('combine', {'folder_name': package_name})
+        | list
+      }}
+
+- name: Check private variables file exists
+  stat:
+    path: "{{ playbook_dir }}/private_data/roles/{{ package_name }}/vars/env.yml"
+  register: private_vars_file_info
+  when:
+    - private_data
+    - load_vars
+
+# Read private values, including environment-backed variables, for template rendering.
+- name: Load configuration files
+  include_vars:
+    file: "{{ playbook_dir }}/private_data/roles/{{ package_name }}/vars/env.yml"
+  no_log: "{{ hide_output | bool }}"
+  when:
+    - private_data
+    - load_vars
+    - private_vars_file_info.stat.exists | default(false)
+
+- name: Separate template directories and files
+  set_fact:
+    template_directories: "{{ (file_templates | default([])) | selectattr('state', 'equalto', 'directory') | list }}"
+    template_files: "{{ (file_templates | default([])) | selectattr('state', 'equalto', 'file') | list }}"
+
+- name: Generate configs (folder only)
+  become_user: "{{ user }}"
+  file:
+    path: "/home/{{ user }}/.dotfiles/{{ package_name }}/{{ item.path }}"
+    state: directory
+  loop: "{{ template_directories }}"
+  loop_control:
+    label: "~/.dotfiles/{{ package_name }}/{{ item.path }}"
+
+- name: Generate configs (files from template)
+  notify: restow dotfiles
+  become_user: "{{ user }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "/home/{{ user }}/.dotfiles/{{ package_name }}/{{ item.path }}"
+    mode: "{{ file_mode if file_mode else omit }}"
+  no_log: "{{ hide_output | bool }}"
+  loop: "{{ template_files }}"
+  loop_control:
+    label: "~/.dotfiles/{{ package_name }}/{{ item.path }}"
