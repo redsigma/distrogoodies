@@ -1,0 +1,101 @@
+---
+- name: Check npm is installed
+  stat:
+    path: "/opt/npm/bin/node"
+  register: npm_install
+
+- name: Setup npm
+  when: not npm_install.stat.exists
+  block:
+    - name: Install npm archive dependencies
+      become: true
+      apt:
+        name:
+          - libatomic1
+          - xz-utils
+        state: present
+
+    - name: Ensure npm directory
+      become: true
+      file:
+        path: /opt/npm
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+        mode: "0755"
+
+    - name: Download Node.js archive
+      become: true
+      get_url:
+        url: "https://nodejs.org/dist/latest-v26.x/node-v26.8.2-linux-x64.tar.xz"
+        dest: "/tmp/node-linux-x64.tar.xz"
+        mode: "0644"
+        timeout: 120
+      register: node_download
+      retries: 5
+      delay: 5
+      until: node_download is succeeded
+
+    - name: Extract Node.js and npm
+      become: true
+      unarchive:
+        src: "/tmp/node-linux-x64.tar.xz"
+        dest: /opt/npm
+        remote_src: true
+        extra_opts:
+          - "--strip-components=1"
+
+    - name: Set npm installation ownership
+      become: true
+      file:
+        path: /opt/npm
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+        recurse: true
+
+    - name: Ensure npm configuration and cache directories
+      become: true
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+        mode: "0755"
+      loop:
+        - /opt/npm/etc
+        - /opt/npm/.cache
+
+    - name: Configure npm prefix and cache
+      become: true
+      copy:
+        dest: /opt/npm/etc/npmrc
+        content: |
+          prefix=/opt/npm
+          cache=/opt/npm/.cache
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+        mode: "0644"
+
+    - name: Ensure .local/bin exists
+      file:
+        path: "{{ ansible_env.HOME }}/.local/bin"
+        state: directory
+        mode: "0755"
+
+    - name: Expose Node.js and npm tools in local bin
+      file:
+        src: "/opt/npm/bin/{{ item }}"
+        dest: "{{ ansible_env.HOME }}/.local/bin/{{ item }}"
+        state: link
+        force: true
+      loop:
+        - node
+        - npm
+        - npx
+
+    - name: Remove Node.js archive
+      become: true
+      file:
+        path: "/tmp/node-linux-x64.tar.xz"
+        state: absent
