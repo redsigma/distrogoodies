@@ -9,6 +9,10 @@
   when: ansible_distribution == "Debian"
 
 
+- name: Install Credential Manager
+  import_tasks: credential_manager.yml
+  when: ansible_distribution == "Debian"
+
 - name: Create SourceGit shortcut
   include_role:
     name: create_shortcut
