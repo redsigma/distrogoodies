@@ -1,0 +1,9 @@
+matches:
+  - trigger: "//ports"
+    replace: "ss -tulpn"
+
+  - trigger: "//ip"
+    replace: "ip -br address"
+
+  - trigger: "//journal"
+    replace: "journalctl -xe"

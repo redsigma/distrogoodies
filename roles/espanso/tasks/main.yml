@@ -1,0 +1,4 @@
+---
+- name: Install Espanso
+  import_tasks: espanso.yml
+  when: ansible_distribution == "Debian"

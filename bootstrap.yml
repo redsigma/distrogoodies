@@ -91,6 +91,12 @@
         name: sourcegit
 
 
+    - name: Install Espanso
+      tags: espanso
+      import_role:
+        name: espanso
+
+
     - name: Install Nomacs
       tags: image_viewer
       import_role:

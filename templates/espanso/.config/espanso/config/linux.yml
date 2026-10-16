@@ -1,0 +1,8 @@
+#
+# Enable Linux-related shortcuts on Linux systems.
+#
+filter_os: "linux"
+enable: true
+
+extra_includes:
+  - "../match/_linux_snippets.yml"

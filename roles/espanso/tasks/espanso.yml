@@ -1,0 +1,68 @@
+---
+- name: Check Espanso is installed
+  stat:
+    path: "/opt/espanso/espanso.AppImage"
+  register: espanso_install
+
+
+- name: Setup Espanso
+  when: not espanso_install.stat.exists
+  block:
+    - name: Install Espanso AppImage
+      include_role:
+        name: download_to_location
+      vars:
+        url: "https://github.com/espanso/espanso/releases/download/v2.4.1/Espanso-X11.AppImage"
+        destination: "/opt/espanso"
+        appname: "espanso.AppImage"
+        file_mode: "0755"
+
+
+    - name: Ensure .local/bin exists
+      file:
+        path: "{{ ansible_env.HOME }}/.local/bin"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+        mode: "0755"
+
+
+    - name: Symlink espanso into local bin
+      file:
+        src: "/opt/espanso/espanso.AppImage"
+        dest: "{{ ansible_env.HOME }}/.local/bin/espanso"
+        state: link
+        force: true
+
+
+    - name: Ensure Espanso runtime preferences directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.cache/espanso/kvs"
+        state: directory
+        mode: "0700"
+
+
+    - name: Disable Espanso first-run wizard
+      copy:
+        dest: "{{ ansible_env.HOME }}/.cache/espanso/kvs/has_completed_wizard"
+        content: "true"
+        mode: "0600"
+
+
+    - name: Disable Espanso first-run welcome window
+      copy:
+        dest: "{{ ansible_env.HOME }}/.cache/espanso/kvs/has_displayed_welcome"
+        content: "true"
+        mode: "0600"
+
+
+- name: Add Espanso to startup
+  include_role:
+    name: run_on_startup
+  vars:
+    filename: espanso.desktop
+    appname: Espanso
+    comment: Text expansion utility
+    exec: /opt/espanso/espanso.AppImage service start --unmanaged
+    categories:
+      - Utility
