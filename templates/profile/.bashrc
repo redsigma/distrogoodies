@@ -4,6 +4,17 @@ case $- in
       *) return;;
 esac
 
+case ":${PATH:-}:" in
+    *":${HOME}/.local/bin:"*) ;;
+    *)
+        if [ -x /usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator ]; then
+            set -a
+            eval "$(/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator 2>/dev/null)"
+            set +a
+        fi
+        ;;
+esac
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -134,14 +145,4 @@ if [ -d "$HOME/.config/.bashrc.d" ]; then
   for f in "$HOME/.config/.bashrc.d/"*.sh; do
     [ -r "$f" ] && . "$f"
   done
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-
-# set PATH so it includes user's private apps if it exists
-if [ -d "$HOME/apps/bin" ] ; then
-    PATH="$HOME/apps/bin:$PATH"
 fi

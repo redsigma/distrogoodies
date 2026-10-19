@@ -7,3 +7,7 @@ xset s noblank
 
 # disable DPMS
 xset -dpms
+
+if [ -f "$HOME/.xsessionrc" ]; then
+    . "$HOME/.xsessionrc"
+fi
