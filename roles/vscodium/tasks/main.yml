@@ -11,7 +11,7 @@
   include_role:
     name: add_vscode_extensions
   vars:
-    path_exec: /opt/vscodium/vscodium.AppImage
+    path_exec: env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
     path_exec_args: >-
       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
@@ -51,7 +51,7 @@
     comment: Code Editing
     icon: vscodium
     exec: >-
-      /opt/vscodium/vscodium.AppImage
+      env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
       %F
@@ -70,7 +70,7 @@
       - id: new-empty-window
         name: New Empty Window
         exec: >-
-          /opt/vscodium/vscodium.AppImage
+          env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
           --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/data
           --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/default/extensions
           --new-window
@@ -85,7 +85,7 @@
   include_role:
     name: add_vscode_extensions
   vars:
-    path_exec: /opt/vscodium/vscodium.AppImage
+    path_exec: env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
     path_exec_args: >-
       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/data
       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
@@ -110,7 +110,7 @@
     comment: Code Editing
     icon: vscodium
     exec: >-
-      /opt/vscodium/vscodium.AppImage
+      env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/data
       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
       %F
@@ -124,7 +124,7 @@
       - id: new-empty-window
         name: New Empty Window
         exec: >-
-          /opt/vscodium/vscodium.AppImage
+          env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
           --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/data
           --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/claude/extensions
           --new-window
@@ -139,7 +139,7 @@
   include_role:
     name: add_vscode_extensions
   vars:
-    path_exec: /opt/vscodium/vscodium.AppImage
+    path_exec: env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
     path_exec_args: >-
       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data
       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/extensions
@@ -183,7 +183,7 @@
     comment: Code Editing
     icon: vscodium
     exec: >-
-      /opt/vscodium/vscodium.AppImage
+      env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
       --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data
       --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/extensions
       %F
@@ -197,7 +197,7 @@
       - id: new-empty-window
         name: New Empty Window
         exec: >-
-          /opt/vscodium/vscodium.AppImage
+          env DISABLE_AUTO_UPDATES=1 /opt/vscodium/vscodium.AppImage
           --user-data-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/data
           --extensions-dir {{ ansible_env.HOME }}/.config/vscodium/profiles/golang/extensions
           --new-window

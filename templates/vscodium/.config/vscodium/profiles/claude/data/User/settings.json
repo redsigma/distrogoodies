@@ -1,0 +1,22 @@
+{% set yaml_file = playbook_dir ~ '/private_data/roles/vscodium/vars/claude_environment.yaml' %}
+{% set yaml_key = 'claude_environment_variables' %}
+{% import 'shared_macros/yaml_mapping.j2' as yaml with context %}
+{% import 'shared_macros/shell.j2' as shell with context %}
+{
+{% if yaml.mapping %}
+    "claudeCode.environmentVariables": [
+{% for name, value in yaml.mapping | dictsort %}
+        {
+            "name": {{ name | to_json }},
+            "value": {{ shell.expand_braced(value, ansible_env) | to_json }}
+        }{% if not loop.last %},{% endif +%}
+{% endfor %}
+    ],
+{% endif %}
+    "extensions.allowOpenInModalEditor": false,
+    "workbench.editor.useModal": "off",
+    "claudeCode.preferredLocation": "panel",
+
+    "claudeCode.hideOnboarding": true,
+    "claudeCode.disableLoginPrompt": true
+}

@@ -1,0 +1,22 @@
+{#
+Parse a caller-provided YAML file and expose a mapping from it.
+
+The importing template must set `yaml_file` and may set `yaml_key` before
+importing this file with `with context`. If `yaml_key` is omitted, the root
+YAML mapping is exposed.
+#}
+{% set yaml_source = yaml_file | default('', true) %}
+{% set yaml_mapping_key = yaml_key | default('', true) %}
+{% if yaml_source %}
+{% set yaml_content = lookup(
+    'ansible.builtin.file',
+    yaml_source,
+    errors='ignore'
+) | default('', true) %}
+{% else %}
+{% set yaml_content = '' %}
+{% endif %}
+{% set yaml_data = (
+    yaml_content | from_yaml | default({}, true)
+) %}
+{% set mapping = yaml_data.get(yaml_mapping_key, {}) if yaml_mapping_key else yaml_data %}

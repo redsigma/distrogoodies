@@ -1,0 +1,20 @@
+{# Return a shell-safe value for use after NAME= while preserving braced expansion. #}
+{% macro render_value(value) -%}
+{%- set shell_value = value | string -%}
+{%- if shell_value | regex_search('\$\{[^}]+\}') -%}
+"{{ shell_value }}"
+{%- else -%}
+{{ shell_value | quote }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro expand_braced(value, replacements) -%}
+{%- set expanded = namespace(value=value | string) -%}
+{%- for name, replacement in replacements.items() -%}
+{%- set expanded.value = expanded.value | replace(
+    '${' ~ name ~ '}',
+    replacement | string
+) -%}
+{%- endfor -%}
+{{- expanded.value -}}
+{%- endmacro %}
