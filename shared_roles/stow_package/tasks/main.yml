@@ -99,3 +99,33 @@
   loop: "{{ template_files }}"
   loop_control:
     label: "~/.dotfiles/{{ package_name }}/{{ item.path }}"
+
+- name: Read rendered template contents
+  become_user: "{{ user }}"
+  slurp:
+    src: "/home/{{ user }}/.dotfiles/{{ package_name }}/{{ item.path }}"
+  register: rendered_template_contents
+  no_log: true
+  loop: "{{ template_files }}"
+  loop_control:
+    label: "~/.dotfiles/{{ package_name }}/{{ item.path }}"
+
+- name: Removed unused rendered templates
+  notify: restow dotfiles
+  become_user: "{{ user }}"
+  file:
+    path: "/home/{{ user }}/.dotfiles/{{ package_name }}/{{ item.item.path }}"
+    state: absent
+  no_log: true
+  loop: "{{ rendered_template_contents.results | default([]) }}"
+  loop_control:
+    label: "~/.dotfiles/{{ package_name }}/{{ item.item.path }}"
+  when:
+    - item.content is defined
+    - >-
+      (
+        item.content | b64decode
+        | regex_search('^#![^\r\n]*(?:\r?\n[ \t]*)*$')
+        | default('', true)
+        | length
+      ) > 0
